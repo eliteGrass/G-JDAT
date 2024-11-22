@@ -11,7 +11,7 @@ import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.apache.rocketmq.client.java.message.MessageBuilderImpl;
 
-import java.io.IOException;
+import java.time.Duration;
 
 public class TestBaseProduct {
 
@@ -22,7 +22,10 @@ public class TestBaseProduct {
         String topic = "test_base_topic";
 
         ClientServiceProvider provider = ClientServiceProvider.loadService();
-        ClientConfiguration configuration = ClientConfiguration.newBuilder().setEndpoints(endpoint).build();
+        ClientConfiguration configuration = ClientConfiguration.newBuilder()
+                .setEndpoints(endpoint)
+                .setRequestTimeout(Duration.ofSeconds(30))
+                .build();
         // 初始化一个生产者并绑定相关的配置
         Producer producer = provider.newProducerBuilder()
                 .setTopics(topic)
@@ -40,7 +43,7 @@ public class TestBaseProduct {
             SendReceipt sendReceipt = producer.send(message);
             System.out.println(sendReceipt.getMessageId());
             producer.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("报错: " + e.getMessage());
             e.printStackTrace();
         }
