@@ -10,15 +10,18 @@
     <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rocketmq-client-version>5.0.5</rocketmq-client-version>
         <hutool-version>5.8.33</hutool-version>
+        <junit-version>5.8.1</junit-version>
+        <lombok-version>1.18.30</lombok-version>
     </properties>
 
     <modules>
         <module>mq</module>
+        <module>JUC</module>
     </modules>
 
     <dependencyManagement>
@@ -28,11 +31,22 @@
                 <artifactId>rocketmq-client-java</artifactId>
                 <version>${rocketmq-client-version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok-version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
