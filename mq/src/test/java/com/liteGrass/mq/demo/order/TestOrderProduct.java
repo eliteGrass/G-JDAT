@@ -1,23 +1,16 @@
 package com.liteGrass.mq.demo.order;
 
-
-/**
- * Copyright (c) 2024 Huahui Information TechnologyCo.,LTD.
- * and China Nuclear Engineering & Construction CorporationLimited (Longxin Authors).
- * All Rights Reserved.
- * <p>
- * This software is part of the Zhonghe Longxin DevelopmentPlatform (the "Platform").
- * <p>
- * Unless required by applicable law or agreed to in writing,software distributed
- * under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS
- * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.*
- * For more information about the Platform, terms and conditions, and user licenses,
- * please visit our official website at www.icnecc.com.cn or contact us directly.
- */
-
-
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import com.liteGrass.mq.tools.config.BaseMqConfig;
+import org.apache.rocketmq.client.apis.ClientException;
+import org.apache.rocketmq.client.apis.message.Message;
+import org.apache.rocketmq.client.apis.producer.Producer;
+import org.apache.rocketmq.client.apis.producer.SendReceipt;
+import org.apache.rocketmq.client.java.message.MessageBuilderImpl;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 /**
  *
@@ -28,8 +21,39 @@ import org.junit.jupiter.api.Test;
  */
 public class TestOrderProduct {
 
+    public static final String TOPIC = "test_order_topic";
+    public static final String TAG = "test_order";
+    public static final String CONSUMER_GROUP = "test_order_consumer_group";
+    public static final String MESSAGE_GROUP = "test_order_message_group";
+
+    /**
+     * - 消息生产的顺序性：
+     *      - 相同topic中
+     *      - 同一个消息组的消息会进入同一个消息队列
+     */
     @Test
-    public void testMethod1() {
+    public void testMethod1() throws ClientException, IOException {
+        // 顺序消息
+        Producer producer = BaseMqConfig.getClientServiceProvider().newProducerBuilder()
+                .setClientConfiguration(BaseMqConfig.getClientConfiguration())
+                .setTopics(TestOrderProduct.TOPIC)
+                .build();
+
+        // 相同的key怎么进行判断相关消息
+        Message message = new MessageBuilderImpl()
+                .setTag(TestOrderProduct.TAG)
+                .setKeys(TestOrderProduct.TOPIC + DateUtil.now())
+                .setBody(StrUtil.bytes("test_message" + DateUtil.now()))
+                .setMessageGroup(TestOrderProduct.MESSAGE_GROUP)
+                .build();
+
+        SendReceipt sendReceipt = producer.send(message);
+        System.out.println(sendReceipt.getMessageId());
+        producer.close();
+    }
+
+    @Test
+    public void testMethod2() {
 
     }
 

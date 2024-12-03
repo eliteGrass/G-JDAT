@@ -22,7 +22,6 @@ public class TestBaseProduct {
 
     @Test
     public void testMethod1() throws ClientException {
-
         // 初始化一个生产者并绑定相关的配置
         Producer producer = BaseMqConfig.getClientServiceProvider().newProducerBuilder()
                 .setTopics(TOPIC)
