@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @Author liteGrass
  * @Date 2024/11/28 15:35
  */
-public class TestPullAsyncConsumer {
+public class TestBasePullAsyncConsumer {
 
     /**
      *

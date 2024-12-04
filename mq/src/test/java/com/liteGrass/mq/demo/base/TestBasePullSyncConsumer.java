@@ -22,7 +22,7 @@ import java.util.List;
  * @Author liteGrass
  * @Date 2024/11/28 15:39
  */
-public class TestPullSyncConsumer {
+public class TestBasePullSyncConsumer {
 
     @Test
     public void testMethod1() throws ClientException, InterruptedException {

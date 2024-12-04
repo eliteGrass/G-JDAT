@@ -39,8 +39,10 @@ public class TestOrderProduct {
                 .setTopics(TestOrderProduct.TOPIC)
                 .build();
 
+        // 0100FFA648897108F807618F6900000000   0100FFA648897187E807618F9400000000
         // 相同的key怎么进行判断相关消息
         Message message = new MessageBuilderImpl()
+                .setTopic(TestOrderProduct.TOPIC)
                 .setTag(TestOrderProduct.TAG)
                 .setKeys(TestOrderProduct.TOPIC + DateUtil.now())
                 .setBody(StrUtil.bytes("test_message" + DateUtil.now()))
@@ -53,8 +55,28 @@ public class TestOrderProduct {
     }
 
     @Test
-    public void testMethod2() {
+    public void testMethod2() throws Exception {
+        // 顺序消息
+        Producer producer = BaseMqConfig.getClientServiceProvider().newProducerBuilder()
+                .setClientConfiguration(BaseMqConfig.getClientConfiguration())
+                .setTopics(TestOrderProduct.TOPIC)
+                .build();
 
+        // 0100FFA648897108F807618F6900000000   0100FFA648897187E807618F9400000000
+        // 相同的key怎么进行判断相关消息
+        for (int i = 0; i < 100; i++) {
+            Message message = new MessageBuilderImpl()
+                    .setTopic(TestOrderProduct.TOPIC)
+                    .setTag(TestOrderProduct.TAG)
+                    .setKeys(TestOrderProduct.TOPIC + DateUtil.now())
+                    .setBody(StrUtil.bytes((i % 3) + ":test_message" + DateUtil.now()))
+                    .setMessageGroup(TestOrderProduct.MESSAGE_GROUP + "_" + (i % 3))
+                    .build();
+
+            SendReceipt sendReceipt = producer.send(message);
+            System.out.println(sendReceipt.getMessageId());
+        }
+        producer.close();
     }
 
 }
