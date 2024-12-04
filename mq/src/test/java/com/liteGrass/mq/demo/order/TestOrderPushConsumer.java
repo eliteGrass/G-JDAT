@@ -2,6 +2,7 @@ package com.liteGrass.mq.demo.order;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.liteGrass.mq.demo.base.TestBaseProduct;
 import com.liteGrass.mq.tools.config.BaseMqConfig;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
@@ -30,13 +31,10 @@ public class TestOrderPushConsumer {
                 .setSubscriptionExpressions(Collections.singletonMap(TestOrderProduct.TOPIC, new FilterExpression("*", FilterExpressionType.TAG)))
                 .setMessageListener(messageView -> {
                     System.out.println(StrUtil.format("接收到消息，消息id为：{}，消息体为：{}", messageView.getMessageId(), StrUtil.str(messageView.getBody(), StandardCharsets.UTF_8)));
-                    try {
-                        Thread.sleep(Duration.ofSeconds(1));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    System.out.println(messageView.getMessageGroup() + " --- ConsumeResult.SUCCESS");
                     return ConsumeResult.SUCCESS;
                 })
+
                 .build();
         Thread.sleep(Long.MAX_VALUE);
         pushConsumer.close();

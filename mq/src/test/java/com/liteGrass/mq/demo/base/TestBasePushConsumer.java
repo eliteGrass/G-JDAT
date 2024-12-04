@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Collections;
 
 public class TestBasePushConsumer {
@@ -29,6 +30,11 @@ public class TestBasePushConsumer {
                 .setSubscriptionExpressions(Collections.singletonMap(TestBaseProduct.TOPIC, new FilterExpression("*", FilterExpressionType.TAG)))
                 .setMessageListener(messageView -> {
                     System.out.println(StrUtil.format("接收到消息，消息id为：{}，消息体为：{}", messageView.getMessageId(), StrUtil.str(messageView.getBody(), StandardCharsets.UTF_8)));
+                    try {
+                        Thread.sleep(Duration.ofSeconds(5));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                     return ConsumeResult.SUCCESS;
                 })
                 .build();
