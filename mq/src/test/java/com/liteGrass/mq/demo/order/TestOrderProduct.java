@@ -62,15 +62,14 @@ public class TestOrderProduct {
                 .setTopics(TestOrderProduct.TOPIC)
                 .build();
 
-        // 0100FFA648897108F807618F6900000000   0100FFA648897187E807618F9400000000
-        // 相同的key怎么进行判断相关消息
+        // 不同的分组进入不同的队列中，如果是同一个分组进入的是同一个队列。分组之间是顺序消费的
         for (int i = 0; i < 100; i++) {
             Message message = new MessageBuilderImpl()
                     .setTopic(TestOrderProduct.TOPIC)
                     .setTag(TestOrderProduct.TAG)
                     .setKeys(TestOrderProduct.TOPIC + DateUtil.now())
-                    .setBody(StrUtil.bytes((i % 3) + ":test_message" + DateUtil.now()))
-                    .setMessageGroup(TestOrderProduct.MESSAGE_GROUP + "_" + (i % 3))
+                    .setBody(StrUtil.bytes((i % 8) + ":test_message" + DateUtil.now()))
+                    .setMessageGroup(TestOrderProduct.MESSAGE_GROUP + "_" + (i % 8))
                     .build();
 
             SendReceipt sendReceipt = producer.send(message);

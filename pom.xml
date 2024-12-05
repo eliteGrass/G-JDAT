@@ -17,6 +17,8 @@
         <hutool-version>5.8.33</hutool-version>
         <junit-version>5.8.1</junit-version>
         <lombok-version>1.18.30</lombok-version>
+        <rocketmq-v5-client-spring-boot>2.3.1</rocketmq-v5-client-spring-boot>
+        <spring-boot-version>3.3.5</spring-boot-version>
     </properties>
 
     <modules>
@@ -26,6 +28,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-v5-client-spring-boot-starter</artifactId>
+                <version>2.3.1</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-client-java</artifactId>

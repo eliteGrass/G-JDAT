@@ -105,6 +105,7 @@ public class TestBasePullAsyncConsumer {
             completableFuture.whenCompleteAsync((messages, exception) -> {
                         // 处理相关异常并进行抛出
                         Assert.isNull(exception, () -> new RuntimeException("接收失败"));
+
                         Map<MessageView, CompletableFuture<Void>> messageMap = messages.stream().collect(Collectors.toMap(message -> message, simpleConsumer::ackAsync));
                         // 开始进行业务处理，如果业务处理
                         messageMap.forEach((messageView, future) -> {
