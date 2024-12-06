@@ -1,14 +1,20 @@
 server:
-  port: 8089
-
+  port: 8087
 
 rocketmq:
   producer:
     endpoints: 113.44.175.226:8081
+  push-consumer:
+    endpoints: 113.44.175.226:8081
 
+
+config:
   normal:
     topic:
-      flowTopic: normal_flow_topic
-
-
+      flowTopic: spring_boot_normal_topic
+      orderTopic: spring_boot_order_topic
+spring:
+  mvc:
+    servlet:
+      path: /api
 
