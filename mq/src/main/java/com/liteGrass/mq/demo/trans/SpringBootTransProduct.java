@@ -34,12 +34,13 @@ public class SpringBootTransProduct {
         // 发送事务消息
         Pair<SendReceipt, Transaction> transactionPair = rocketMQClientTemplate
                 .sendMessageInTransaction(transTopic, MessageBuilder.withPayload("test_message" + DateUtil.now())
-                        .setHeader("transId", "")
+                        .setHeader("transId", "123456")
                         .build());
         SendReceipt sendReceipt = transactionPair.getSendReceipt();
         MessageId messageId = sendReceipt.getMessageId();
         System.out.println(messageId);
-        // 事务相关消息
+        // 事务相关消息,进行业务代码相关执行
+        System.out.println("执行业务代码");
         return true;
     }
 }
