@@ -24,7 +24,7 @@ public class SpringBootOrderProduct {
 
     public boolean syncSendOrderMessage() {
         for (int i = 0; i < 3000; i++) {
-            SendReceipt sendReceipt = rocketMQClientTemplate.syncSendFifoMessage(orderTopic, i + "test_message" + DateUtil.now(), "order-" + i % 8);
+            SendReceipt sendReceipt = rocketMQClientTemplate.syncSendFifoMessage(orderTopic, i % 64 + "test_message" + DateUtil.now(), "order-" + i % 64);
             System.out.println(sendReceipt.getMessageId());
         }
         return true;

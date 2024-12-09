@@ -7,6 +7,7 @@ import jakarta.annotation.Resource;
 import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.apache.rocketmq.client.core.RocketMQClientTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,7 +32,9 @@ public class SpringBootNormalProduct {
      * @return
      */
     public boolean asyncSendNormalMessage() {
-        CompletableFuture<SendReceipt> sendCompletableFuture = rocketMQClientTemplate.asyncSendNormalMessage(normalTopic, "test_message" + DateUtil.now(), new CompletableFuture<>());
+        CompletableFuture<SendReceipt> sendCompletableFuture = rocketMQClientTemplate
+                .asyncSendNormalMessage(normalTopic, "test_message" + DateUtil.now(), new CompletableFuture<>())
+                ;
         // 如果消息发送失败，进行日志记录功能，重新进行发送
         sendCompletableFuture.whenCompleteAsync((res, ex) -> {
             // 如果存在异常，进行补偿处理

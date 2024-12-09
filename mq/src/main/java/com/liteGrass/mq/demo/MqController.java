@@ -1,6 +1,7 @@
 package com.liteGrass.mq.demo;
 
 
+import com.liteGrass.mq.demo.delay.SpringBootDelayProduct;
 import com.liteGrass.mq.demo.normal.SpringBootNormalProduct;
 import com.liteGrass.mq.demo.order.SpringBootOrderProduct;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class MqController {
 
     private final SpringBootNormalProduct springBootNormalProduct;
     private final SpringBootOrderProduct springBootOrderProduct;
+    private final SpringBootDelayProduct springBootDelayProduct;
 
     @GetMapping("/asyncSendNormalMessage")
     public String asyncSendNormalMessage() throws InterruptedException {
@@ -44,5 +46,14 @@ public class MqController {
         return "顺序消息处理完成";
     }
 
+    @GetMapping("/syncSendDelayMessage")
+    public String syncSendDelayMessage() throws InterruptedException {
+        // 处理业务消息
+        System.out.println("业务消息处理完成");
+        Thread.sleep(Duration.ofSeconds(3));
+        //处理完成后发送mq
+        springBootDelayProduct.syncSendDelayMessage();
+        return "顺序消息处理完成";
+    }
 
 }

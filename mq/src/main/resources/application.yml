@@ -13,6 +13,8 @@ config:
     topic:
       flowTopic: spring_boot_normal_topic
       orderTopic: spring_boot_order_topic
+      delayTopic: spring_boot_delay_topic
+      transTopic: spring_boot_trans_topic
 spring:
   mvc:
     servlet:
