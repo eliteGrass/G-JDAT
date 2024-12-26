@@ -1,6 +1,7 @@
 package com.liteGrass.mq.demo.trans;
 
 
+import cn.hutool.core.util.StrUtil;
 import org.apache.rocketmq.client.annotation.RocketMQTransactionListener;
 import org.apache.rocketmq.client.apis.message.MessageView;
 import org.apache.rocketmq.client.apis.producer.TransactionResolution;
@@ -14,13 +15,16 @@ import java.util.Map;
  * @Date 2024/12/9 18:05
  */
 @RocketMQTransactionListener
-public class SpringBootTransListener implements RocketMQTransactionChecker {
+public class SpringBootTransChecker implements RocketMQTransactionChecker {
 
     @Override
     public TransactionResolution check(MessageView messageView) {
         Map<String, String> properties = messageView.getProperties();
-
-        return null;
+        // 获取相关属性id进行检查，返回状态码
+        String transId = properties.get("transId");
+        // 根据业务id进行回差
+        System.out.println(transId);
+        return TransactionResolution.COMMIT;
     }
 
 }
