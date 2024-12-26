@@ -19,11 +19,15 @@
         <lombok-version>1.18.30</lombok-version>
         <rocketmq-v5-client-spring-boot>2.3.1</rocketmq-v5-client-spring-boot>
         <spring-boot-version>3.3.5</spring-boot-version>
+        <mysql-version>8.0.33</mysql-version>
     </properties>
 
     <modules>
         <module>mq</module>
         <module>JUC</module>
+        <module>ES</module>
+        <module>camunda-engine</module>
+        <module>SpringSecurity</module>
     </modules>
 
     <dependencyManagement>
@@ -49,6 +53,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
             <dependency>

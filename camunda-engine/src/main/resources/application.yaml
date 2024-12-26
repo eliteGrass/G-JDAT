@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:mysql://113.44.175.226:3306/camunda?autoReconnect=true&sendFractionalSeconds=false&useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+    username: root
+    password: Yuan@100544
+    driver-class-name: com.mysql.cj.jdbc.Driver
+camunda.bpm.admin-user:
+  id: admin
+  password: 123456
+  skipIsolationLevelCheck: true
+
+logging:
+  level:
+    #debug级别可以打印执行Sql
+    org.camunda: debug
