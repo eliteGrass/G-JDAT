@@ -9,6 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <description>JAVA  And Tools</description>
+
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -28,6 +30,7 @@
         <module>ES</module>
         <module>camunda-engine</module>
         <module>SpringSecurity</module>
+        <module>DesignPatterns</module>
     </modules>
 
     <dependencyManagement>
