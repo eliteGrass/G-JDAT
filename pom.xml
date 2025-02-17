@@ -23,6 +23,7 @@
         <spring-boot-version>3.3.5</spring-boot-version>
         <mysql-version>8.0.33</mysql-version>
         <cglib-version>3.3.0</cglib-version>
+        <flowable-version></flowable-version>
     </properties>
 
     <modules>
@@ -32,6 +33,8 @@
         <module>camunda-engine</module>
         <module>SpringSecurity</module>
         <module>DesignPatterns</module>
+        <module>FuckFlow</module>
+        <module>flowable</module>
     </modules>
 
     <dependencyManagement>
