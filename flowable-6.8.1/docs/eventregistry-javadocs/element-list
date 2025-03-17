@@ -1,0 +1,4 @@
+org.flowable.eventregistry.api
+org.flowable.eventregistry.api.management
+org.flowable.eventregistry.api.model
+org.flowable.eventregistry.api.runtime

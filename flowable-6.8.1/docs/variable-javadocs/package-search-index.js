@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.flowable.variable.api.delegate"},{"l":"org.flowable.variable.api.event"},{"l":"org.flowable.variable.api.history"},{"l":"org.flowable.variable.api.persistence.entity"},{"l":"org.flowable.variable.api.runtime"},{"l":"org.flowable.variable.api.types"}]

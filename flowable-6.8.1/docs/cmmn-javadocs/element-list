@@ -1,0 +1,9 @@
+org.flowable.cmmn.api
+org.flowable.cmmn.api.delegate
+org.flowable.cmmn.api.event
+org.flowable.cmmn.api.history
+org.flowable.cmmn.api.listener
+org.flowable.cmmn.api.migration
+org.flowable.cmmn.api.reactivation
+org.flowable.cmmn.api.repository
+org.flowable.cmmn.api.runtime
