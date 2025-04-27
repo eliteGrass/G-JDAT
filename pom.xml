@@ -19,7 +19,7 @@
         <hutool-version>5.8.33</hutool-version>
         <junit-version>5.8.1</junit-version>
         <lombok-version>1.18.30</lombok-version>
-        <rocketmq-v5-client-spring-boot>2.3.1</rocketmq-v5-client-spring-boot>
+        <rocketmq-v5-client-spring-boot>2.3.3</rocketmq-v5-client-spring-boot>
         <spring-boot-version>3.3.5</spring-boot-version>
         <mysql-version>8.0.33</mysql-version>
         <cglib-version>3.3.0</cglib-version>
@@ -35,6 +35,8 @@
         <module>DesignPatterns</module>
         <module>FuckFlow</module>
         <module>flowable</module>
+        <module>old-mq</module>
+        <module>trans</module>
     </modules>
 
     <dependencyManagement>

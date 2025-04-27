@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.liteGrass.mq.tools.config.BaseMqConfig;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.message.Message;
+import org.apache.rocketmq.client.apis.message.MessageBuilder;
 import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.apache.rocketmq.client.java.message.MessageBuilderImpl;
@@ -64,14 +65,17 @@ public class TestOrderProduct {
 
         // 不同的分组进入不同的队列中，如果是同一个分组进入的是同一个队列。分组之间是顺序消费的
         for (int i = 0; i < 100; i++) {
+            MessageBuilder messageBuilder = new MessageBuilderImpl();
+
+
             Message message = new MessageBuilderImpl()
+                    .addProperty("groupId", String.valueOf(i % 8))
                     .setTopic(TestOrderProduct.TOPIC)
                     .setTag(TestOrderProduct.TAG)
                     .setKeys(TestOrderProduct.TOPIC + DateUtil.now())
                     .setBody(StrUtil.bytes((i % 8) + ":test_message" + DateUtil.now()))
                     .setMessageGroup(TestOrderProduct.MESSAGE_GROUP + "_" + (i % 8))
                     .build();
-
             SendReceipt sendReceipt = producer.send(message);
             System.out.println(sendReceipt.getMessageId());
         }

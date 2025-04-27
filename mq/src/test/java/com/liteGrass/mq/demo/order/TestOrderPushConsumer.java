@@ -2,7 +2,6 @@ package com.liteGrass.mq.demo.order;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.liteGrass.mq.demo.base.TestBaseProduct;
 import com.liteGrass.mq.tools.config.BaseMqConfig;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
@@ -13,9 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 /**
  * @Description 顺序消费者
@@ -29,15 +27,16 @@ public class TestOrderPushConsumer {
         PushConsumer pushConsumer = BaseMqConfig.getClientServiceProvider().newPushConsumerBuilder()
                 .setClientConfiguration(BaseMqConfig.getClientConfiguration())
                 .setConsumerGroup(TestOrderProduct.CONSUMER_GROUP)
-                .setSubscriptionExpressions(Collections.singletonMap(TestOrderProduct.TOPIC, new FilterExpression("*", FilterExpressionType.TAG)))
+                .setSubscriptionExpressions(Collections.singletonMap("test_trans_topic", new FilterExpression("*", FilterExpressionType.TAG)))
                 .setMessageListener(messageView -> {
                     System.out.println(StrUtil.format("接收到消息，消息id为：{}，消息体为：{}", messageView.getMessageId(), StrUtil.str(messageView.getBody(), StandardCharsets.UTF_8)));
-                    try {
+                    /*try {
                         TimeUnit.SECONDS.sleep(3);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
-                    }
+                    }*/
                     System.out.println(messageView.getMessageGroup() + " --- ConsumeResult.SUCCESS");
+                    Map<String, String> properties = messageView.getProperties();
                     return ConsumeResult.SUCCESS;
                 })
                 .setConsumptionThreadCount(10)  //设置线程数量

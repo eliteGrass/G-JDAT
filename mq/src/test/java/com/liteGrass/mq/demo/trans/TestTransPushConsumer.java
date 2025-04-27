@@ -2,7 +2,6 @@ package com.liteGrass.mq.demo.trans;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.liteGrass.mq.demo.delay.TestDelayProduct;
 import com.liteGrass.mq.tools.config.BaseMqConfig;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
 import org.apache.rocketmq.client.apis.consumer.FilterExpression;
@@ -11,7 +10,6 @@ import org.apache.rocketmq.client.apis.consumer.PushConsumer;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Collections;
 
 /**
@@ -26,14 +24,14 @@ public class TestTransPushConsumer {
         PushConsumer pushConsumer = BaseMqConfig.getClientServiceProvider().newPushConsumerBuilder()
                 .setClientConfiguration(BaseMqConfig.getClientConfiguration())
                 .setConsumerGroup(TestTransProduct.CONSUMER_GROUP)
-                .setSubscriptionExpressions(Collections.singletonMap(TestTransProduct.TOPIC, new FilterExpression("*", FilterExpressionType.TAG)))
+                .setSubscriptionExpressions(Collections.singletonMap("service-flow-syncFormData-group", new FilterExpression("*", FilterExpressionType.TAG)))
                 .setMessageListener(messageView -> {
                     System.out.println(StrUtil.format("接收到消息，消息id为：{}，消息体为：{}", messageView.getMessageId(), StrUtil.str(messageView.getBody(), StandardCharsets.UTF_8)));
-                    try {
+                    /*try {
                         Thread.sleep(Duration.ofSeconds(5));
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
-                    }
+                    }*/
                     System.out.println(messageView.getMessageGroup() + " --- ConsumeResult.SUCCESS");
                     return ConsumeResult.SUCCESS;
                 })

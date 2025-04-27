@@ -1,0 +1,27 @@
+server:
+  port: 8088
+
+config:
+  trans-log:
+    enabled: true
+
+
+rocketmq:
+  name-server: 113.44.175.226:9876
+  producer:
+    group: test
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://113.44.175.226/litegrass?serverTimezone=GMT%2B8
+    username: root
+    password: Yuan@100544
+
+
+
+
+
+
+
