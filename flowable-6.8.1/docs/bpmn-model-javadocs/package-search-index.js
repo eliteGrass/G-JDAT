@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.flowable.bpmn.model"},{"l":"org.flowable.bpmn.model.alfresco"},{"l":"org.flowable.bpmn.model.parse"}]

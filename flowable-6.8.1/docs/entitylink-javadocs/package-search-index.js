@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.flowable.entitylink.api"},{"l":"org.flowable.entitylink.api.history"}]

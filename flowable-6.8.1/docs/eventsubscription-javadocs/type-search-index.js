@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.flowable.eventsubscription.api","l":"EventSubscription"},{"p":"org.flowable.eventsubscription.api","l":"EventSubscriptionBuilder"},{"p":"org.flowable.eventsubscription.api","l":"EventSubscriptionQuery"}]

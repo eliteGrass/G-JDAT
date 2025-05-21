@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.flowable.identitylink.api.history","l":"HistoricIdentityLink"},{"p":"org.flowable.identitylink.api","l":"IdentityLink"},{"p":"org.flowable.identitylink.api","l":"IdentityLinkInfo"},{"p":"org.flowable.identitylink.api","l":"IdentityLinkType"}]

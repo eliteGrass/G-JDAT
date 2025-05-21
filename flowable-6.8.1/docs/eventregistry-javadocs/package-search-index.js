@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.flowable.eventregistry.api"},{"l":"org.flowable.eventregistry.api.management"},{"l":"org.flowable.eventregistry.api.model"},{"l":"org.flowable.eventregistry.api.runtime"}]

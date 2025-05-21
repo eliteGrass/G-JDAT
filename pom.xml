@@ -27,16 +27,11 @@
     </properties>
 
     <modules>
-        <module>mq</module>
-        <module>JUC</module>
-        <module>ES</module>
-        <module>camunda-engine</module>
-        <module>SpringSecurity</module>
-        <module>DesignPatterns</module>
-        <module>FuckFlow</module>
-        <module>flowable</module>
-        <module>old-mq</module>
-        <module>trans</module>
+        <module>learnFLow</module>
+        <module>learnMq</module>
+        <module>learnBase</module>
+        <module>learnEs</module>
+        <module>learnSpring</module>
     </modules>
 
     <dependencyManagement>
