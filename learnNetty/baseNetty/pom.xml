@@ -5,12 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.liteGrass</groupId>
-        <artifactId>G-JDAT</artifactId>
+        <artifactId>learnNetty</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>learnFLow</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>baseNetty</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -18,14 +17,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <modules>
-        <module>camunda-engine</module>
-        <module>FuckFlow</module>
-        <module>learn-flowable</module>
-    </modules>
 
-    <dependencyManagement>
-
-    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

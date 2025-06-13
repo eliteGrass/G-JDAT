@@ -23,7 +23,6 @@
         <spring-boot-version>3.3.5</spring-boot-version>
         <mysql-version>8.0.33</mysql-version>
         <cglib-version>3.3.0</cglib-version>
-        <flowable-version></flowable-version>
     </properties>
 
     <modules>
@@ -32,6 +31,7 @@
         <module>learnBase</module>
         <module>learnEs</module>
         <module>learnSpring</module>
+        <module>learnNetty</module>
     </modules>
 
     <dependencyManagement>
