@@ -16,7 +16,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rocketmq-client-version>5.0.5</rocketmq-client-version>
-        <hutool-version>5.8.33</hutool-version>
+        <hutool-version>5.8.38</hutool-version>
         <junit-version>5.8.1</junit-version>
         <lombok-version>1.18.30</lombok-version>
         <rocketmq-v5-client-spring-boot>2.3.3</rocketmq-v5-client-spring-boot> 
