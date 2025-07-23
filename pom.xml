@@ -23,6 +23,8 @@
         <spring-boot-version>3.3.5</spring-boot-version>
         <mysql-version>8.0.33</mysql-version>
         <cglib-version>3.3.0</cglib-version>
+        <slf4j-version>2.0.16</slf4j-version>
+        <logback-version>1.5.11</logback-version>
     </properties>
 
     <modules>
@@ -32,6 +34,7 @@
         <module>learnEs</module>
         <module>learnSpring</module>
         <module>learnNetty</module>
+        <module>luren-master</module>
     </modules>
 
     <dependencyManagement>
@@ -79,6 +82,17 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>${cglib-version}</version>
+            </dependency>
+            <!-- 日志级别相关 -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

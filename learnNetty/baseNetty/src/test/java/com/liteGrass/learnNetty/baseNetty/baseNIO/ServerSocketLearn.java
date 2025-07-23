@@ -355,4 +355,210 @@ public class ServerSocketLearn {
         }
     }
 
+
+    /**
+    * @Auther: liteGrass
+    * @Date: 2025/7/14 22:21
+    * @Desc: 客户端
+    */
+    @Test
+    void testMethodClientV2() throws IOException {
+        SocketChannel sc = SocketChannel.open();
+        sc.connect(new InetSocketAddress(8080));
+
+        // 开始读取数据
+        int read = 0;
+        while (true) {
+            ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024);
+            read += sc.read(buffer);
+            System.out.println("read:" + read);
+            buffer.clear();
+        }
+    }
+
+    /**
+    * @Auther: liteGrass
+    * @Date: 2025/7/14 22:17
+    * @Desc: 写入数据
+    */
+    @Test
+    void testMethodV6() throws IOException {
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.bind(new InetSocketAddress(8080));
+        // 设置非阻塞
+        serverSocketChannel.configureBlocking(false);
+        // 监听器
+        Selector selector = Selector.open();
+        SelectionKey register = serverSocketChannel.register(selector, 0);
+        register.interestOps(SelectionKey.OP_ACCEPT);
+        while (true) {
+            selector.select();
+            System.out.println("监听到相应的事件");
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                // 进行移除操作
+                iterator.remove();
+                if (key.isAcceptable()) {
+                    ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
+                    System.out.println(StrUtil.format("监听到连接事件：{}，开始建立连接",ssc));
+                    SocketChannel sc = ssc.accept();
+                    sc.configureBlocking(false);
+                    // 监听读事件，并绑定相应的缓冲区，进行重复读取工作
+                    sc.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(5));
+                    // 向客户端写入数据
+                    StringBuffer sb = new StringBuffer();
+                    for (int i = 0; i < 20000000; i++) {
+                        sb.append("s");
+                    }
+                    ByteBuffer writeBuffer = StandardCharsets.UTF_8.encode(sb.toString());
+                    // 会造成发送很多0数据，造成线程占用，我们可以进行相应得处理，监听写入数据
+                    while (writeBuffer.hasRemaining()) {
+                        int write = sc.write(writeBuffer);
+                        System.out.println("write:" + write);
+                    }
+                }
+                else if (key.isReadable()) {
+                    try {
+                        SocketChannel sc = (SocketChannel) key.channel();
+                        ByteBuffer buffer = (ByteBuffer) key.attachment();
+                        // 进行写入buffer
+                        int read = sc.read(buffer);
+                        if (read == -1) {
+                            key.cancel();
+                        } else {
+                            buffer.flip();
+                            for (int i = 0; i < buffer.limit(); i++) {
+                                if (buffer.get(i) == '\n') {
+                                    // 开始进行读取工作，从position开始读取，读取到i
+                                    ByteBuffer target = ByteBuffer.allocate(i - buffer.position());
+                                    for (int j = buffer.position(); j < i; j++) {
+                                        target.put(buffer.get());
+                                    }
+                                    // 读取完成后继续向后移动一个位置,跳过\n分隔符
+                                    buffer.get();
+                                    target.flip();
+                                    System.out.println(StandardCharsets.UTF_8.decode(target).toString());
+                                }
+                            }
+                            // 把剩下的分给下次，如果第一次全部放到缓冲区不够占满，下次在进行读取一直读取到0
+                            buffer.compact();
+                            // 如果此时buffer == limit进行二倍扩容
+                            if (buffer.position() == buffer.limit()) {
+                                ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() * 2);
+                                buffer.flip();
+                                newBuffer.put(buffer);
+                                key.attach(newBuffer);
+                            }
+                        }
+                    } catch (Exception e){
+                        key.cancel();
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+    * @Auther: liteGrass
+    * @Date: 2025/7/14 22:39
+    * @Desc: V7: 监控写入
+    */
+    @Test
+    void testMethodV7() throws IOException {
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.bind(new InetSocketAddress(8080));
+        // 设置非阻塞
+        serverSocketChannel.configureBlocking(false);
+        // 监听器
+        Selector selector = Selector.open();
+        SelectionKey register = serverSocketChannel.register(selector, 0);
+        register.interestOps(SelectionKey.OP_ACCEPT);
+        while (true) {
+            selector.select();
+            System.out.println("监听到相应的事件");
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                // 进行移除操作
+                iterator.remove();
+                if (key.isAcceptable()) {
+                    ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
+                    System.out.println(StrUtil.format("监听到连接事件：{}，开始建立连接",ssc));
+                    SocketChannel sc = ssc.accept();
+                    sc.configureBlocking(false);
+                    // 监听读事件，并绑定相应的缓冲区，进行重复读取工作
+                    sc.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(5));
+                    // 向客户端写入数据
+                    StringBuffer sb = new StringBuffer();
+                    for (int i = 0; i < 20000000; i++) {
+                        sb.append("s");
+                    }
+                    ByteBuffer writeBuffer = StandardCharsets.UTF_8.encode(sb.toString());
+                    // 会造成发送很多0数据，造成线程占用，我们可以进行相应得处理，监听写入数据
+                    // 先进性一次写入，判断是否写入完成，如果还有剩余得数据，监控写操作
+                    int write = sc.write(writeBuffer);
+                    System.out.println("write:" + write);
+
+                    if (writeBuffer.hasRemaining()) {
+                        key.interestOps(key.interestOps() + SelectionKey.OP_WRITE);
+                        // 保存之前剩余没有写入得数据
+                        key.attach(writeBuffer);
+                    }
+                }
+                else if (key.isWritable()) {
+                    SocketChannel sc = (SocketChannel) key.channel();
+                    ByteBuffer buffer = (ByteBuffer) key.attachment();
+                    // 开始进行数据写入
+                    int write = sc.write(buffer);
+                    System.out.println("write:" + write);
+                    // 判断是否写入完成
+                    if (!buffer.hasRemaining()) {
+                        key.interestOps(key.interestOps() - SelectionKey.OP_WRITE);
+                        key.attach(ByteBuffer.allocate(5));
+                        buffer.clear();
+                    }
+                }
+                else if (key.isReadable()) {
+                    try {
+                        SocketChannel sc = (SocketChannel) key.channel();
+                        ByteBuffer buffer = (ByteBuffer) key.attachment();
+                        // 进行写入buffer
+                        int read = sc.read(buffer);
+                        if (read == -1) {
+                            key.cancel();
+                        } else {
+                            buffer.flip();
+                            for (int i = 0; i < buffer.limit(); i++) {
+                                if (buffer.get(i) == '\n') {
+                                    // 开始进行读取工作，从position开始读取，读取到i
+                                    ByteBuffer target = ByteBuffer.allocate(i - buffer.position());
+                                    for (int j = buffer.position(); j < i; j++) {
+                                        target.put(buffer.get());
+                                    }
+                                    // 读取完成后继续向后移动一个位置,跳过\n分隔符
+                                    buffer.get();
+                                    target.flip();
+                                    System.out.println(StandardCharsets.UTF_8.decode(target).toString());
+                                }
+                            }
+                            // 把剩下的分给下次，如果第一次全部放到缓冲区不够占满，下次在进行读取一直读取到0
+                            buffer.compact();
+                            // 如果此时buffer == limit进行二倍扩容
+                            if (buffer.position() == buffer.limit()) {
+                                ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() * 2);
+                                buffer.flip();
+                                newBuffer.put(buffer);
+                                key.attach(newBuffer);
+                            }
+                        }
+                    } catch (Exception e){
+                        key.cancel();
+                    }
+                }
+            }
+        }
+    }
+
 }
