@@ -1,0 +1,7 @@
+@startuml
+Alice -> Bob: Authentication Requestfdsfds 发的所发生的
+Bob --> Alice: Authentication Response
+
+Alice -> Bob: Another authentication Requestfdsfdsfds
+Alice <-- Bob: Another authentication Response
+@enduml

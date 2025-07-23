@@ -1,0 +1,22 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: lesson073
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/luren?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: root123
+  sql:
+    init:
+      schema-locations: classpath:db/init.sql
+      mode: always
+  redis:
+    host: 192.168.216.128
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com:
+      itsoku: debug

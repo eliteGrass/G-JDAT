@@ -1,0 +1,41 @@
+@startuml
+actor 用户 as A
+participant 手机客户端 as B
+participant 网页端 as C
+participant 后端登录服务 as D
+participant Redis as E
+
+autonumber
+alt 手机端登录
+A -> B: 手机端先登录
+B -> D: 调用登录接口
+D --> B: 登录成功（返回token）
+end
+
+alt 网页端获取登录二维码
+A -> C: 点击扫码登录
+C -> D: 获取扫码登录二维码
+D -> D: 生成二维码UUID
+D -> E: 将二维码UUID存到redis中（set UUID 0）,有效期1分钟
+D --> C: 返回扫码登录的二维码
+end
+
+alt 手机端扫码登录
+A -> B: 扫码（使用手机扫描网页端登录二维码）
+B -> B: 弹出提示：确认登录？
+A -> B: 点击确认登录
+B -> D: 请求登录(二维码UUID+手机端登录成功时后端返回的token)
+D -> E: 码是否过期？(get UUID)
+D -> D: 根据token，拿到用户id
+D -> E: SET UUID 用户id
+D --> B: 成功
+end
+
+alt 网页端轮询扫码状态（可以每秒轮询一次、或者长轮询）
+C -> D: 轮询扫码状态（二维码UUID）
+D -> E: 查询UUID对应的用户id
+D -> D: 根据用户id生成网页端token
+D --> C: 登录成功（返回token给网页端）
+A -> C: 访问其他页面
+end
+@enduml

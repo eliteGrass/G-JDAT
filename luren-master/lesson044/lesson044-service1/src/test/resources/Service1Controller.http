@@ -1,0 +1,2 @@
+### 此访问的访问的路径：gateway->service1->service2
+GET http://localhost:8080/lesson044-service1/service1/test1

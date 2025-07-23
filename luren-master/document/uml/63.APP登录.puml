@@ -1,0 +1,14 @@
+@startuml
+actor 用户 as A
+participant 手机客户端 as B
+participant 后端登录服务 as C
+
+A -> B: 输入账号（用户名+密码）
+B -> C: 发送登录请求（用户名+密码）
+C -> C: 账号验证（用户名+密码）
+C -> C: 生成token
+C --> B: 登录成功（返回token）
+A -> B: 访问其他页面
+B -> C: 调用其他接口（请求头中携带token）
+
+@enduml

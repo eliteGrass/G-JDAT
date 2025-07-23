@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itsoku.lesson089.mapper.ArticleMapper">
+
+    <select id="findMyArticles1" resultType="com.itsoku.lesson089.po.ArticlePO">
+        SELECT
+            id,
+            user_id AS userId,
+            title
+        FROM
+            t_article_lesson089
+        WHERE
+            user_id = #{userId}
+          AND title LIKE '%${keywords}%'
+    </select>
+
+
+<select id="findMyArticles2" resultType="com.itsoku.lesson089.po.ArticlePO">
+    SELECT
+        id,
+        user_id AS userId,
+        title
+    FROM
+        t_article_lesson089
+    WHERE
+        user_id = #{userId}
+      AND title LIKE #{keywords}
+</select>
+
+</mapper>

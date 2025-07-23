@@ -1,0 +1,27 @@
+### 1.批量将用户积分丢到redis中zset中
+POST http://localhost:8080/addUserPoint
+Accept: application/json
+Content-Type: application/json
+
+[
+  {
+    "userId": "user1",
+    "points": 100,
+    "updateTime": 1720663200002
+  },
+  {
+    "userId": "user2",
+    "points": 100,
+    "updateTime": 1720663200001
+  },
+  {
+    "userId": "user3",
+    "points": 150,
+    "updateTime": 1720763100000
+  }
+]
+
+
+### 2.获取排名前3的用户列表，按积分倒序，积分相同时，按最后更新时间升序
+GET http://localhost:8080/userRankings?topN=3
+Accept: application/json

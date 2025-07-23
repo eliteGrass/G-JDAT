@@ -1,0 +1,39 @@
+### 停止job1
+POST http://localhost:8080/jobStop?id=1
+Accept: application/json
+
+### 启动job1
+POST http://localhost:8080/jobStart?id=1
+Accept: application/json
+
+### 删除job1
+POST http://localhost:8080/jobDelete?id=1
+Accept: application/json
+
+### 变更job2，将其执行周期改为每5秒一次
+POST http://localhost:8080/jobUpdate
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "2",
+  "name": "第2个job",
+  "cron": "*/5 * * * * *",
+  "beanName": "job2",
+  "beanMethod": "execute",
+  "status": 1
+}
+
+
+### 添加一个job3，每秒执行一次
+POST http://localhost:8080/jobCreate
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "第3个job",
+  "cron": "* * * * * *",
+  "beanName": "job3",
+  "beanMethod": "execute",
+  "status": 1
+}

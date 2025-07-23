@@ -1,0 +1,10 @@
+### userAdd
+GET http://localhost:8080/userAdd?userName=路人&age=35&password=123456
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+
+
+### getUserPassword
+GET http://localhost:8080/getUserPassword?userId=001
+Accept: application/json

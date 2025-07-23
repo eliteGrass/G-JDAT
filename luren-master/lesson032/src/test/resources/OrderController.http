@@ -1,0 +1,21 @@
+### 演示：创建订单，模拟立即投递消息
+POST http://localhost:8080/order/createOrder
+Accept: application/json
+Content-Type: application/json
+
+{
+  "goods": "立即投递消息",
+  "price": "59.00",
+  "delaySeconds": 0
+}
+
+### 演示：创建订单，模拟投递延迟消息，延迟时间是 5 秒
+POST http://localhost:8080/order/createOrder
+Accept: application/json
+Content-Type: application/json
+
+{
+  "goods": "投递延迟消息，延迟时间 5s",
+  "price": "59.00",
+  "delaySeconds": 5
+}

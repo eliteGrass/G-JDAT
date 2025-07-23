@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: lesson067
+  redis:
+    host: 192.168.216.128
+logging:
+  level:
+    com:
+      itsoku: debug
+
+
+secret-key: b0e8668b-bcf2-4d73-abd4-893bbc1c6079

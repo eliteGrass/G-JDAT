@@ -1,0 +1,11 @@
+### 1、查询我的文章列表：标题中带有java关键字的
+GET http://localhost:8080/findMyArticles1?myUserId=1&keywords=java
+Accept: application/json
+
+### 2、查询我的文章列表，sql注入查询，可以看到所有用户数据
+GET http://localhost:8080/findMyArticles1?myUserId=1&keywords=' or 1=1 or '
+Accept: application/json
+
+### 3、解决方案，使用#代替$
+GET http://localhost:8080/findMyArticles2?myUserId=1&keywords=' or 1=1 or '
+Accept: application/json

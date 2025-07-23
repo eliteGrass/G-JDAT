@@ -1,0 +1,27 @@
+### 1.将用户地理位置信息丢到redis中
+POST http://localhost:8080/addUserLocation
+Accept: application/json
+Content-Type: application/json
+
+[
+  {
+    "userId": "user1",
+    "longitude": 121.245996,
+    "latitude": 31.114995
+  },
+  {
+    "userId": "user2",
+    "longitude": 121.241343,
+    "latitude": 31.113264
+  },
+  {
+    "userId": "user3",
+    "longitude": 121.356703,
+    "latitude": 31.161321
+  }
+]
+
+
+### 2.查询附近的人，以坐标（121.2439,31.114678）为圆心，获取方圆1000米内的10个用户，返回用户id、经纬度、和圆心间的距离
+GET http://localhost:8080/findNearbyUserList?longitude=121.2439&latitude=31.114678&radius=1000&count=10
+Accept: application/json

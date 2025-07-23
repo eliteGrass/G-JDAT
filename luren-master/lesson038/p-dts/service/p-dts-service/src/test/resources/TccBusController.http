@@ -1,0 +1,3 @@
+### tccRecored补偿
+POST http://localhost:9100/tcc/tccBus/recover/b8c4c92c89ed4b278ff8988722765a64
+Accept: application/json

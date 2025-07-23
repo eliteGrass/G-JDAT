@@ -1,0 +1,30 @@
+@startuml
+actor 用户 as A
+participant 电商APP as B
+participant 电商后台 as C
+participant 微信 as D
+
+
+autonumber
+alt#LightBlue #LightBlue 用户下单 && 支付流程
+A -> B: 下单，金额100
+B -> C: 下单，金额100
+C -> C: 订单表插入记录，insert into t_order (id, price, status) values(1, 100, 待支付)
+C --> B: 下单成功，等待用户支付
+B -> C: 用户发起支付
+C -> C: 创建一条订单支付记录，insert into t_order_pay (id, order_id, price,status) values (1, 1, 100, 支付中)
+C -> C: 组装微信支付请求，包含：out_trade_no：电商这边支付订单号(可以使用t_order_pay.id)，price：支付金额
+C --> B: 返回微信支付请求信息
+B -> D: 携带微信支付请求信息，跳转到微信
+D --> B: 等待用户确认
+B --> D: 用户输入微信支付密码，点击确认支付
+D --> B: 支付成功
+B --> A: 支付成功
+end
+
+alt#FF0 #FF0 微信服务端，异步的方式，向电商系统，发送支付结果通知
+D -> C: 异步发送支付通知，包含的信息有（out_order_no：电商这边支付订单号；trade_state：交易状态，比如成功还是失败）
+C -> C: 处理支付回调
+C --> D: SUCCESS
+end
+@enduml

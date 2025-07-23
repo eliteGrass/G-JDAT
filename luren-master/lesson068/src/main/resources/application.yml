@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: lesson068
+logging:
+  level:
+    com:
+      itsoku: debug
+
+# 加解密秘钥(长度只能是 128、192或256位，一个普通字符是8位)
+secure:
+  key: 1234567890123456

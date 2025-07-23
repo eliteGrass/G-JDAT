@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style type="text/css">
+        *{ font-size: 12px;}
+        table td,table th{ padding: 3px}
+        h1.title{display: block; font-size: 16px; font-weight: bold; color: blue; background:#eee; padding: 5px;
+            margin: 0px; }
+        table.imagetable {font-family: verdana,arial,sans-serif;font-size:11px;color:#333333;border-width: 1px;border-color: #999999;border-collapse: collapse;}
+
+        table.imagetable th {background:#b5cfd2;border-width: 1px;padding: 5px;border-style: solid;border-color: #999999;}
+
+        table.imagetable td {background:#dcddc0;border-width: 1px;padding: 5px;border-style: solid;border-color: #999999;}
+    </style>
+</head>
+<body>
+    <h1 class="title">TCC 分布式事务记录列表</h1>
+    <table class="imagetable" border="1" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <th>ID</th>
+            <th>状态</th>
+            <th>业务类型</th>
+            <th>业务id</th>
+            <th>事务发起者</th>
+            <th>下次处理时间</th>
+            <th>已失败次数/允许失败次数</th>
+            <th>创建时间</th>
+            <th>最后更新时间</th>
+            <th>操作</th>
+        </tr>
+        <tr th:each="tccRecord,state:${tccRecordList}">
+            <td th:text="${tccRecord.id}"></td>
+            <td th:text="${tccRecord.extData.status}"></td>
+            <td th:text="${tccRecord.extData.busType}"></td>
+            <td th:text="${tccRecord.busId}"></td>
+            <td th:text="${tccRecord.classname}"></td>
+            <td th:text="${tccRecord.extData.nextDisposeTime}"></td>
+            <td th:text="${tccRecord.failure}+'/'+${tccRecord.maxFailure}"></td>
+            <td th:text="${tccRecord.extData.addtime}"></td>
+            <td th:text="${tccRecord.extData.uptime}"></td>
+            <td>
+                <a target="_blank" th:href="'/tccRecord/detail?tccRecordId='+${tccRecord.id}">详情</a>
+                <a th:if="${tccRecord.status}==0" target="_blank" th:href="'/tccRecord/recover?tccRecordId='+${tccRecord.id}">重试</a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

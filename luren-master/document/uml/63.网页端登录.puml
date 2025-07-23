@@ -1,0 +1,15 @@
+@startuml
+actor 用户 as A
+participant 网页端 as B
+participant 后端登录服务 as C
+
+autonumber
+A -> B: 输入账号（用户名密码）
+B -> C: 发送登录请求（用户名+密码）
+C -> C: 账号验证（用户名+密码）
+C -> C: 生成token，并将 token 放到 session 中
+C --> B: 登录成功（将token放到cookie中）
+A -> B: 访问其他页面
+B -> C: 调用其他接口（请求头Cookie中会自动携带token）
+
+@enduml

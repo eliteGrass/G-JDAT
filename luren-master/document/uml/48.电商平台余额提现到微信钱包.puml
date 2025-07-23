@@ -1,0 +1,39 @@
+@startuml
+actor 用户 as A
+participant 电商 as B
+participant 微信支付 as C
+
+autonumber
+A -> B: 发起提现到微信钱包
+activate B
+B -> B: 创建提现记录（状态为0：处理中）
+B -> B: 更新账户资金：资金从余额流向冻结金额（balance = balance - 提现金额, frozen = frozen + 提现金额)
+B -> B: 生成资金流水
+B -> C: 发起提现申请
+activate C
+C --> B: 提现处理中
+deactivate C
+B --> A: 提现处理中
+deactivate B
+
+
+
+C -[#blue]> B: 提现成功，微信发起回调
+activate B
+B -> B: 更新提现记录（状态置为1：处理成功）
+B -> B: 更新账户资金（frozen = frozen - 提现金额）
+B -> B: 生成资金流水
+B --> C: OK
+deactivate B
+
+
+
+C -[#red]> B: 提现失败，微信发起回调
+activate B
+B -> B: 更新提现记录（状态置为2：处理失败）
+B -> B: 更新账户资金：资金从冻结金额回到余额（frozen = frozen - 提现金额, balance = balance + 提现金额）
+B -> B: 生成资金流水
+B --> C: OK
+deactivate B
+
+@enduml

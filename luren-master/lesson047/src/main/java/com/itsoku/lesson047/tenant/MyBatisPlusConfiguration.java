@@ -1,0 +1,32 @@
+package com.itsoku.lesson047.tenant;
+
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * <b>description</b>： Java高并发、微服务、性能优化实战案例100讲，视频号：程序员路人，源码 & 文档 & 技术支持，请加个人微信号：itsoku <br>
+ * <b>time</b>：2024/5/10 16:16 <br>
+ * <b>author</b>：ready likun_557@163.com
+ */
+@Configuration
+public class MyBatisPlusConfiguration {
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(this.tenantLineInnerInterceptor());
+        return interceptor;
+    }
+
+    @Bean
+    public TenantLineInnerInterceptor tenantLineInnerInterceptor() {
+        return new TenantLineInnerInterceptor(this.customTenantHandler());
+    }
+
+    @Bean
+    public CustomTenantHandler customTenantHandler() {
+        return new CustomTenantHandler();
+    }
+
+}

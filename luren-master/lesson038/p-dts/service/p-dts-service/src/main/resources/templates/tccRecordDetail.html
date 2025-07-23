@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style type="text/css">
+        *{ font-size: 12px;}
+        table td,table th{ padding: 3px}
+        h1.title{display: block; font-size: 16px; font-weight: bold; color: blue; background:#eee; padding: 5px;
+         margin: 0px; }
+        table.imagetable {font-family: verdana,arial,sans-serif;font-size:11px;color:#333333;border-width: 1px;border-color: #999999;border-collapse: collapse;}
+
+        table.imagetable th {background:#b5cfd2;border-width: 1px;padding: 5px;border-style: solid;border-color: #999999;}
+
+        table.imagetable td {background:#dcddc0;border-width: 1px;padding: 5px;border-style: solid;border-color: #999999;}
+    </style>
+</head>
+<body>
+    <h1 class="title">基本信息</h1>
+    <table class="imagetable" border="1" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <td>ID</td>
+            <td th:text="${tccRecordPO.id}"></td>
+            <td>状态</td>
+            <td th:text="${tccRecordPO.extData.status}"></td>
+        </tr>
+        <tr>
+            <td>业务类型</td>
+            <td th:text="${tccRecordPO.extData.busType}"></td>
+            <td>业务id</td>
+            <td th:text="${tccRecordPO.busId}"></td>
+        </tr>
+        <tr>
+            <td>事务发起者</td>
+            <td colspan="3" th:text="${tccRecordPO.classname}"></td>
+        </tr>
+        <tr>
+            <td>事务发起者服务</td>
+            <td colspan="3" th:text="${tccRecordPO.serviceApplicationName}"></td>
+        </tr>
+        <tr>
+            <td>事务发起者bean名称</td>
+            <td colspan="3" th:text="${tccRecordPO.beanname}"></td>
+        </tr>
+        <tr>
+            <td>请求参数</td>
+            <td colspan="3" th:text="${tccRecordPO.requestData}"></td>
+        </tr>
+    </table>
+    <h1 class="title">分支日志</h1>
+    <table class="imagetable" border="1" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <th>ID</th>
+            <th>状态</th>
+            <th>分支完整类名.方法</th>
+            <th>创建时间</th>
+            <th>最后更新时间</th>
+            <th>上下文信息</th>
+        </tr>
+        <tr th:each="tccBranchLogPO,state:${tccBranchLogPOList}">
+            <td th:text="${tccBranchLogPO.id}"></td>
+            <td th:text="${tccBranchLogPO.extData.status}"></td>
+            <td th:text="${tccBranchLogPO.classname}+'.'+${tccBranchLogPO.extData.method}"></td>
+            <td th:text="${tccBranchLogPO.extData.addtime}"></td>
+            <td th:text="${tccBranchLogPO.extData.uptime}"></td>
+            <td>
+                <textarea readonly th:text="${tccBranchLogPO.context}" rows="3" cols="70"></textarea>
+            </td>
+        </tr>
+    </table>
+
+    <h1 class="title">事务补偿日志</h1>
+    <table class="imagetable" border="1" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <th>ID</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>耗时</th>
+            <th>创建时间</th>
+            <th>执行结果</th>
+        </tr>
+        <tr th:each="tccDisposeLogPO,state:${tccDisposeLogPOList}">
+            <td th:text="${tccDisposeLogPO.id}"></td>
+            <td th:text="${tccDisposeLogPO.extData.starttime}"></td>
+            <td th:text="${tccDisposeLogPO.extData.endtime}"></td>
+            <td th:text="${tccDisposeLogPO.extData.costtime}"></td>
+            <td th:text="${tccDisposeLogPO.extData.addtime}"></td>
+            <td>
+                <textarea readonly th:text="${tccDisposeLogPO.msg}" rows="3" cols="70"></textarea>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

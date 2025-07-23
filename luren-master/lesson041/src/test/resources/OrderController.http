@@ -1,0 +1,17 @@
+### 请求1
+POST http://localhost:8080/orderPay
+Accept: application/json
+Content-Type: application/json
+
+{
+  "orderId": "123"
+}
+
+### 请求2
+POST http://localhost:8080/orderPay
+Accept: application/json
+Content-Type: application/json
+
+{
+  "orderId": "123"
+}

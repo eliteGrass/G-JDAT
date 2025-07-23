@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%thread] %d{HH:mm:ss} ：%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.itsoku.lesson032.mq" level="debug" />
+    <logger name="com.itsoku.lesson032.service" level="debug" />
+    <logger name="com.itsoku.lesson032.mapper" level="debug" />
+
+    <root level="warn">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

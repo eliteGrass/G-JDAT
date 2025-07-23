@@ -1,0 +1,14 @@
+package com.itsoku.lesson048.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.itsoku.lesson048.po.AccountFundsSnapshotPO;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * <b>description</b>： Java高并发、微服务、性能优化实战案例100讲，视频号：程序员路人，源码 & 文档 & 技术支持，请加个人微信号：itsoku <br>
+ * <b>time</b>：2023/11/30 19:14 <br>
+ * <b>author</b>：ready likun_557@163.com
+ */
+@Mapper
+public interface AccountFundsSnapshotMapper extends BaseMapper<AccountFundsSnapshotPO> {
+}

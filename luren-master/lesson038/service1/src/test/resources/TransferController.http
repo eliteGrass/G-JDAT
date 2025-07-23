@@ -1,0 +1,32 @@
+### 1、跨库转账：正常情况
+POST http://localhost:9101/transfer
+Accept: application/json
+Content-Type: application/json
+
+{
+  "fromAccountId": "1",
+  "toAccountId": "2",
+  "transferPrice": "10.00"
+}
+
+### 2、跨库转账：异常情况，目标账户不存在
+POST http://localhost:9101/transfer
+Accept: application/json
+Content-Type: application/json
+
+{
+  "fromAccountId": "1",
+  "toAccountId": "3",
+  "transferPrice": "10.00"
+}
+
+### 3、跨库转账：测试自动补偿，把TccBranch2Service停掉，会导致第2个分支调用失败，然后再重启，重试
+POST http://localhost:9101/transfer
+Accept: application/json
+Content-Type: application/json
+
+{
+  "fromAccountId": "1",
+  "toAccountId": "2",
+  "transferPrice": "10.00"
+}

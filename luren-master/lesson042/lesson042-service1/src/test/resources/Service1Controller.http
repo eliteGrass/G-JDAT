@@ -1,0 +1,10 @@
+### 测试 service1中的test1 接口
+GET http://localhost:8081/service1/test1
+itsoku-header-user_id: 10001
+itsoku-header-user_name: luren
+
+
+### 走 gateway 访问 service1中的test1 接口
+GET http://localhost:8080/lesson042-service1/service1/test1
+itsoku-header-local: zh_cn
+token: itsoku

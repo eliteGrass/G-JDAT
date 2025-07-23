@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: lesson066
+  redis:
+    host: 192.168.216.128
+    database: 0
+    port: 6379
+logging:
+  level:
+    com:
+      itsoku: debug

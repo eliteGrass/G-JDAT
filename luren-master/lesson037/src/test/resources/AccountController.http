@@ -1,0 +1,8 @@
+### 平台账户余额提现到微信钱包
+POST http://localhost:8080/account/cashOut
+Accept: application/json
+Content-Type: application/json
+
+{
+  "price": "10.00"
+}

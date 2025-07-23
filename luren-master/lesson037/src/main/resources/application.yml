@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: lesson037
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/luren?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: root123
+    # 这里我们把数据库连接池的最大量配置为20，最小10，获取链接超时时间为3秒，这样方便看到效果
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-timeout: 3000
+  sql:
+    init:
+      schema-locations: classpath:db/init.sql
+      mode: always
+  rabbitmq:
+    addresses: 47.100.68.41 # rabbitmq 地址
+    port: 5672
+    username: admin
+    password: 123
+    listener:
+      simple:
+        acknowledge-mode: auto # 消费过程没有向外抛出异常自动ack
+        prefetch: 1
+    connection-timeout: 3000 # 连接超时时间
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+
+logging:
+  level:
+    com:
+      itsoku: debug
+# 消息相关配置
+mq:
+  producer: ${spring.application.name}
+

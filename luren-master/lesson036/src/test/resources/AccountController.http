@@ -1,0 +1,10 @@
+### 跨库转账
+POST http://localhost:8080/account/transfer
+Accept: application/json
+Content-Type: application/json
+
+{
+  "fromAccountId": "1",
+  "toAccountId": "2",
+  "transferPrice": "10.00"
+}

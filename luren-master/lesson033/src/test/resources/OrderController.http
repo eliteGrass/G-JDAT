@@ -1,0 +1,31 @@
+### 案例1：投递普通订单消息，模拟消费
+POST http://localhost:8080/order/createOrder
+Accept: application/json
+Content-Type: application/json
+
+{
+  "goods": "立即投递消息",
+  "price": "59.00",
+  "delaySeconds": 0
+}
+
+### 案例2：投递延迟订单消息，延迟5秒，模拟消费
+POST http://localhost:8080/order/createOrder
+Accept: application/json
+Content-Type: application/json
+
+{
+  "goods": "投递延迟消息，延迟时间 5s",
+  "price": "59.00",
+  "delaySeconds": 5
+}
+
+### 案例3：投递普通消息，模拟消费失败，自动重试的情况
+POST http://localhost:8080/order/createOrder
+Accept: application/json
+Content-Type: application/json
+
+{
+  "goods": "尝试消费失败重试的情况，金额为空，消费的时候会失败",
+  "price": null
+}

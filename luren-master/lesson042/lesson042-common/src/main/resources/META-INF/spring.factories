@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.itsoku.lesson042.common.CommonAutoConfiguration,\
+com.itsoku.lesson042.common.context.SystemContextAutoConfiguration

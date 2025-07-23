@@ -1,0 +1,13 @@
+###
+POST http://localhost:8080/account/transfer
+Content-Type: application/json
+Accept: application/json
+X-Timestamp: 1721801839
+X-Nonce: 668a6ae7-938b-434a-9e0f-ffe939afd69c
+X-Sign: 48403d96cd7cb8aed387498fe9880667
+
+{
+  "fromAccountId": "张三",
+  "toAccountId": "李四",
+  "transferPrice": 100
+}

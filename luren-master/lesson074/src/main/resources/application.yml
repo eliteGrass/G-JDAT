@@ -1,0 +1,11 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: lesson073
+  redis:
+    host: 192.168.216.128
+logging:
+  level:
+    com:
+      itsoku: debug

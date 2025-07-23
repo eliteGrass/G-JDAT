@@ -1,0 +1,25 @@
+### 1、参数加密测试
+POST http://localhost:8080/decryptTest
+Content-Type: application/json
+Accept: application/json
+
+0125effde9b6e41750e501a0f60300e281153a4d9f2769245e9f10bc9a8c6f510cac44a82c840693c0e1cc9b26908ac4
+
+### 2、返回值加密测试
+GET http://localhost:8080/encryptTest
+Accept: application/json
+
+### 3、请求和返回值同时加密测试
+POST http://localhost:8080/secureTest
+Content-Type: application/json
+Accept: application/json
+
+0125effde9b6e41750e501a0f60300e281153a4d9f2769245e9f10bc9a8c6f510cac44a82c840693c0e1cc9b26908ac4
+
+### 4、解密，传入密文，返回明文
+POST http://localhost:8080/decrypt
+Content-Type: application/json
+Accept: application/json
+
+74460482ea28a5a84fd8174f1b772c1886405eeb3eaa2dbbb169f9ba477484437cb8bb04416bceceec8f092e32fb2ca390b38c03fe21a8c3241c242a6c18fb67
+

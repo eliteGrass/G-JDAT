@@ -1,0 +1,22 @@
+### 优化前，支付接口
+POST http://localhost:8080/pay
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+channel=alipay&orderNo=123
+
+
+### 优化后，支付接口
+POST http://localhost:8080/newPay
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+channel=alipay&orderNo=123
+
+
+### 优化后，扩展一种支付方式-信用卡支付
+POST http://localhost:8080/newPay
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+channel=creditcard&orderNo=123

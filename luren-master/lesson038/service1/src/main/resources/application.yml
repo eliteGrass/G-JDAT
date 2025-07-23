@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: lesson038-service1
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tcc_service1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: root123
+    # 这里我们把数据库连接池的最大量配置为20，最小10，获取链接超时时间为3秒，这样方便看到效果
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-timeout: 3000
+  sql:
+    init:
+      schema-locations: classpath:db/init.sql
+      mode: always
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+
+logging:
+  level:
+    com:
+      itsoku: debug
+      ms: debug
+server:
+  port: 9101
+service:
+  url: http://localhost:${server.port}

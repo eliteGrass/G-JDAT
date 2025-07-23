@@ -1,0 +1,38 @@
+### get 请求
+GET {{url}}/get
+
+### post 提交表单
+POST http://localhost:8080/post
+Content-Type: application/x-www-form-urlencoded
+
+name=路人&age=30
+
+### body 中传递json数据
+POST http://localhost:8080/body
+Content-Type: application/json
+
+[3,10,40]
+
+### put请求
+PUT http://localhost:8080/put
+
+### 多文件上传文件接口测试
+POST http://localhost:8080/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file1"; filename="1.png"
+
+< D:\code\likun_557\luren\document\img\MQ常见使用场景.png
+--WebAppBoundary--
+Content-Disposition: form-data; name="file2"; filename="2.png"
+
+< D:\code\likun_557\luren\document\img\幂等接口通用实现.png
+--WebAppBoundary--
+Content-Disposition: form-data;name=userName
+
+tom
+--WebAppBoundary--
+Content-Disposition: form-data;name=age
+
+23

@@ -1,0 +1,19 @@
+# curl 'http://itsoku.com/course/5'
+#  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+#  -H 'Accept-Language: zh-CN,zh;q=0.9'
+#  -H 'Cache-Control: max-age=0'
+#  -H 'Connection: keep-alive'
+#  -H 'Referer: http://itsoku.com/'
+#  -H 'Upgrade-Insecure-Requests: 1'
+#  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36' \
+GET http://itsoku.com/course/5
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Language: zh-CN,zh;q=0.9
+Cache-Control: max-age=0
+Connection: keep-alive
+Referer: http://itsoku.com/
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
+
+###
+

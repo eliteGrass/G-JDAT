@@ -1,0 +1,10 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: lesson041
+  redis:
+    host: 192.168.216.128
+distribute:
+  lock:
+    prefix: '${spring.application.name}:lock:'

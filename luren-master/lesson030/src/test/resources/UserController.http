@@ -1,0 +1,27 @@
+### 1、演示正常情况：用户注册成功，消息投递成功
+POST http://localhost:8080/user/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "路人"
+}
+
+### 2、演示业务执行失败，消息不会投递
+POST http://localhost:8080/user/registerError
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "路人"
+}
+
+
+### 3、演示投递到MQ失败，则由job会自动重试（我们在消息投递的地方，故意加了一段代码：消息体超过100投递失败）
+POST http://localhost:8080/user/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "路人《Java高并发&微服务&性能调优实战案例100讲》，59块钱，含源码 & 文档 & 技术支持，有需要的朋友可以点击左下角小黄车了解，或者加我微信itsoku了解"
+}

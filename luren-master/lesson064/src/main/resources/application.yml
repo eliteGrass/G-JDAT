@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: lesson064
+logging:
+  level:
+    com:
+      itsoku: debug

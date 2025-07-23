@@ -1,0 +1,28 @@
+### 正常转账
+POST http://localhost:8080/account/transfer
+Content-Type: application/json
+Accept: application/json
+
+{
+  "requestId": "100000001",
+  "data": {
+    "fromAccountId": "1",
+    "toAccountId": "2",
+    "transferPrice": "10.00"
+  }
+}
+
+
+### 转账失败，余额不足
+POST http://localhost:8080/account/transfer
+Content-Type: application/json
+Accept: application/json
+
+{
+  "requestId": "100000002",
+  "data": {
+    "fromAccountId": "1",
+    "toAccountId": "2",
+    "transferPrice": "200.00"
+  }
+}
