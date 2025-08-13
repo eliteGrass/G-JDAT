@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <process id="learnTimeStartEvent" name="learnTimeStartEvent" isExecutable="true">
+    <userTask id="sid-71cde4a5-ef08-4d56-a47a-a1dce68484fa" flowable:exclusive="true" name="数据上包">
+      <extensionElements/>
+    </userTask>
+    <endEvent id="sid-101ad448-22a7-463a-8073-409856c0f750"/>
+    <sequenceFlow id="sid-b6e42b54-b6dd-4870-be06-98d90b9d156f" sourceRef="sid-71cde4a5-ef08-4d56-a47a-a1dce68484fa" targetRef="sid-101ad448-22a7-463a-8073-409856c0f750"/>
+    <startEvent id="sid-7f3c84bb-18cd-4afd-9f87-6868ea026f66" name="定时器开始">
+      <extensionElements/>
+      <timerEventDefinition>
+        <timeDuration>PT1M</timeDuration>
+      </timerEventDefinition>
+    </startEvent>
+    <sequenceFlow id="sid-1fe4250b-06ec-4162-8677-1d64de57ea4b" sourceRef="sid-7f3c84bb-18cd-4afd-9f87-6868ea026f66" targetRef="sid-71cde4a5-ef08-4d56-a47a-a1dce68484fa"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_learnTimeStartEvent">
+    <bpmndi:BPMNPlane bpmnElement="learnTimeStartEvent" id="BPMNPlane_learnTimeStartEvent">
+      <bpmndi:BPMNShape id="shape-ffebcf69-df09-47b8-97f0-0d4db06df194" bpmnElement="sid-71cde4a5-ef08-4d56-a47a-a1dce68484fa">
+        <omgdc:Bounds x="-65.0" y="175.0" width="100.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-d6d5f02b-66a4-4470-828a-028af66d3a38" bpmnElement="sid-101ad448-22a7-463a-8073-409856c0f750">
+        <omgdc:Bounds x="145.0" y="200.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-997b59f3-1117-4460-b981-b07655dab6ec" bpmnElement="sid-b6e42b54-b6dd-4870-be06-98d90b9d156f">
+        <omgdi:waypoint x="35.0" y="215.0"/>
+        <omgdi:waypoint x="145.0" y="215.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="shape-915de515-28d2-4d0e-bc2d-4781029c3f19" bpmnElement="sid-7f3c84bb-18cd-4afd-9f87-6868ea026f66">
+        <omgdc:Bounds x="-180.0" y="200.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-731beb36-f0b4-457f-822a-852297c26798" bpmnElement="sid-1fe4250b-06ec-4162-8677-1d64de57ea4b">
+        <omgdi:waypoint x="-150.0" y="215.0"/>
+        <omgdi:waypoint x="-65.0" y="215.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

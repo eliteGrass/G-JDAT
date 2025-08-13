@@ -19,6 +19,13 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
 
+shard-upload:
+  file-path: ${SHARD_UPLOAD_PATH:./uploads/}
+  chunk-size: 1048576
+  # 启用并发合并的最小分片数量阈值
+  concurrent-merge-threshold: 10
+  # 并发合并时的批次大小
+  merge-batch-size: 5
 
 logging:
   level:

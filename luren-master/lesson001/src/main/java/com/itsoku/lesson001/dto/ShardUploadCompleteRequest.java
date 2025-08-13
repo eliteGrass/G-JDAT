@@ -2,6 +2,8 @@ package com.itsoku.lesson001.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * <b>description</b>： Java高并发、微服务、性能优化实战案例100讲，视频号：程序员路人，源码 & 文档 & 技术支持，请加个人微信号：itsoku <br>
  * <b>time</b>：2024/3/26 22:08 <br>
@@ -12,5 +14,6 @@ public class ShardUploadCompleteRequest {
     /**
      * 分片上传任务id（由初始化分片接口返回的）
      */
+    @NotBlank(message = "分片任务ID不能为空")
     private String shardUploadId;
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- Bean 定义 -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="jdbcUrl" value="jdbc:mysql://192.168.179.129:3306/flowableDBV6?useSSL=false&amp;allowPublicKeyRetrieval=true" />
+        <property name="username" value="root" />
+        <property name="password" value="100544" />
+
+        <!-- 连接池附加配置 -->
+        <property name="maximumPoolSize" value="20"/>
+        <property name="connectionTimeout" value="30000"/>
+        <property name="idleTimeout" value="600000"/>
+        <property name="maxLifetime" value="1800000"/>
+    </bean>
+
+    <bean id="processEngineConfiguration" class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="databaseSchemaUpdate" value="true"/>
+        <property name="asyncExecutorActivate" value="true"/>
+    </bean>
+</beans>

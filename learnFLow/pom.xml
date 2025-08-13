@@ -16,16 +16,13 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <flowable-v6-version>6.8.0</flowable-v6-version>
     </properties>
 
     <modules>
         <module>camunda-engine</module>
         <module>FuckFlow</module>
-        <module>learn-flowable</module>
+        <module>learn-flowable-v6</module>
     </modules>
-
-    <dependencyManagement>
-
-    </dependencyManagement>
-
 </project>

@@ -5,16 +5,24 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.liteGrass</groupId>
-        <artifactId>learnFLow</artifactId>
+        <artifactId>G-JDAT</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>learn-flowable</artifactId>
+    <artifactId>disruptor</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

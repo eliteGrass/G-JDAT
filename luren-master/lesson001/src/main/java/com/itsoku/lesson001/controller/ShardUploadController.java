@@ -8,8 +8,11 @@ import com.itsoku.lesson001.dto.ShardUploadInitRequest;
 import com.itsoku.lesson001.dto.ShardUploadPartRequest;
 import com.itsoku.lesson001.service.ShardUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 
 /**
@@ -19,6 +22,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("/shardUpload")
+@Validated
 public class ShardUploadController {
     @Autowired
     private ShardUploadService shardUploadService;
@@ -29,7 +33,7 @@ public class ShardUploadController {
      * @return 分片任务id
      */
     @PostMapping("/init")
-    public Result<String> init(@RequestBody ShardUploadInitRequest request) {
+    public Result<String> init(@Valid @RequestBody ShardUploadInitRequest request) {
         String shardUploadId = this.shardUploadService.init(request);
         return ResultUtils.ok(shardUploadId);
     }
@@ -40,7 +44,7 @@ public class ShardUploadController {
      * @return
      */
     @PostMapping("/uploadPart")
-    public Result<Boolean> uploadPart(ShardUploadPartRequest request) throws IOException {
+    public Result<Boolean> uploadPart(@Valid ShardUploadPartRequest request) throws IOException {
         this.shardUploadService.uploadPart(request);
         return ResultUtils.ok(true);
     }
@@ -51,7 +55,7 @@ public class ShardUploadController {
      * @return
      */
     @PostMapping("/complete")
-    public Result<Boolean> complete(@RequestBody ShardUploadCompleteRequest request) throws IOException {
+    public Result<Boolean> complete(@Valid @RequestBody ShardUploadCompleteRequest request) throws IOException {
         this.shardUploadService.complete(request);
         return ResultUtils.ok(true);
     }
@@ -63,7 +67,7 @@ public class ShardUploadController {
      * @return
      */
     @GetMapping("/detail")
-    public Result<ShardUploadDetailResponse> detail(@RequestParam("shardUploadId") String shardUploadId) {
+    public Result<ShardUploadDetailResponse> detail(@RequestParam("shardUploadId") @NotBlank(message = "分片任务ID不能为空") String shardUploadId) {
         return ResultUtils.ok(this.shardUploadService.detail(shardUploadId));
     }
 }
