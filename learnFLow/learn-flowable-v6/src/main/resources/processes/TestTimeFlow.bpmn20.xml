@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <signal id="sid-b1e4caf4-4221-4f1f-900f-532bb571aa9e" name="sid-b1e4caf4-4221-4f1f-900f-532bb571aa9e" flowable:scope="global"/>
   <process id="TestTimeFlow" name="TestTimeFlow" isExecutable="true">
     <startEvent id="sid-59a46360-6b34-49a7-ba17-93bd0d2e8474">
       <extensionElements/>
@@ -10,7 +11,7 @@
     <endEvent id="sid-1f3cce24-4151-4bef-aeb3-e69eaab2e485"/>
     <sequenceFlow id="sid-2f2b4cf8-1fa2-466c-be0e-91268c186cb1" sourceRef="sid-59a46360-6b34-49a7-ba17-93bd0d2e8474" targetRef="sid-88761ae6-0603-4958-9821-a0ebd6d203eb"/>
     <intermediateCatchEvent id="sid-f7925177-e8c9-42cc-adad-7fe6112a2ff4">
-      <signalEventDefinition/>
+      <signalEventDefinition signalRef="sid-b1e4caf4-4221-4f1f-900f-532bb571aa9e"/>
     </intermediateCatchEvent>
     <sequenceFlow id="sid-eacab964-3f81-47ce-af49-91c3f721ca85" sourceRef="sid-88761ae6-0603-4958-9821-a0ebd6d203eb" targetRef="sid-f7925177-e8c9-42cc-adad-7fe6112a2ff4"/>
     <sequenceFlow id="sid-8f79db2b-4bef-42f2-a6b3-3cfddd4b121e" sourceRef="sid-f7925177-e8c9-42cc-adad-7fe6112a2ff4" targetRef="sid-1f3cce24-4151-4bef-aeb3-e69eaab2e485"/>

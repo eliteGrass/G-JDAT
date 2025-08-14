@@ -20,6 +20,7 @@
 
     <modules>
         <module>DesignPatterns</module>
+        <module>disruptor</module>
         <module>JUC</module>
     </modules>
 
