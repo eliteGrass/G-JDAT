@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 3: 图片懒加载代理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: #aaa;
+      font-size: 16px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .controls button {
+      padding: 12px 24px;
+      background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+
+    .controls button:hover {
+      transform: scale(1.05);
+    }
+
+    .stats {
+      background: #16213e;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 15px;
+      background: #0f3460;
+      border-radius: 10px;
+    }
+
+    .stat-label {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #00d2ff;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 50px;
+    }
+
+    .image-card {
+      background: #16213e;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .image-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .image-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background: #0f3460;
+      overflow: hidden;
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .image-container img.loaded {
+      opacity: 1;
+    }
+
+    .image-container .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .spinner {
+      border: 3px solid #0f3460;
+      border-top: 3px solid #00d2ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .image-info {
+      padding: 15px;
+    }
+
+    .image-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .image-status {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .image-status.loading {
+      color: #ffa500;
+    }
+
+    .image-status.loaded {
+      color: #4caf50;
+    }
+
+    .image-status.error {
+      color: #f44336;
+    }
+
+    .viewport-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 210, 255, 0.2);
+      border: 2px solid #00d2ff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .scroll-hint {
+      text-align: center;
+      padding: 30px;
+      font-size: 18px;
+      color: #aaa;
+    }
+
+    .scroll-hint::before {
+      content: '⬇️';
+      display: block;
+      font-size: 30px;
+      margin-bottom: 10px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>图片懒加载代理</h1>
+    <p class="subtitle">使用虚拟代理+IntersectionObserver实现高性能懒加载</p>
+  </div>
+
+  <div class="controls">
+    <button onclick="scrollToBottom()">滚动到底部</button>
+    <button onclick="scrollToTop()">返回顶部</button>
+    <button onclick="resetStats()">重置统计</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-label">总图片数</div>
+      <div class="stat-value" id="totalImages">0</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">已加载</div>
+      <div class="stat-value" id="loadedImages">0</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">加载中</div>
+      <div class="stat-value" id="loadingImages">0</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">节省流量</div>
+      <div class="stat-value" id="savedBandwidth">0 MB</div>
+    </div>
+  </div>
+
+  <div class="viewport-indicator">
+    <div>视口位置: <span id="scrollPosition">0</span>px</div>
+  </div>
+
+  <div class="image-grid" id="imageGrid"></div>
+
+  <div class="scroll-hint">
+    向下滚动查看懒加载效果
+  </div>
+
+  <script>
+    // ============ 图片懒加载代理实现 ============
+
+    class ImageLazyLoadProxy {
+      constructor(options = {}) {
+        this.loadingPlaceholder = options.loadingPlaceholder || this.generatePlaceholder();
+        this.errorPlaceholder = options.errorPlaceholder || this.generateErrorPlaceholder();
+        this.rootMargin = options.rootMargin || '50px';
+        this.threshold = options.threshold || 0.01;
+
+        this.stats = {
+          total: 0,
+          loaded: 0,
+          loading: 0,
+          failed: 0,
+          savedBandwidth: 0
+        };
+
+        this.observer = new IntersectionObserver(
+          this.handleIntersection.bind(this),
+          {
+            rootMargin: this.rootMargin,
+            threshold: this.threshold
+          }
+        );
+      }
+
+      generatePlaceholder() {
+        // 生成SVG占位图
+        return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%230f3460' width='400' height='300'/%3E%3Ctext fill='%2300d2ff' font-family='Arial' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ELoading...%3C/text%3E%3C/svg%3E`;
+      }
+
+      generateErrorPlaceholder() {
+        return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f44336' width='400' height='300'/%3E%3Ctext fill='white' font-family='Arial' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ELoad Failed%3C/text%3E%3C/svg%3E`;
+      }
+
+      observe(imgElement, realSrc) {
+        this.stats.total++;
+        this.updateStats();
+
+        // 设置占位图
+        imgElement.src = this.loadingPlaceholder;
+        imgElement.dataset.src = realSrc;
+        imgElement.dataset.status = 'pending';
+
+        // 开始观察
+        this.observer.observe(imgElement);
+      }
+
+      handleIntersection(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.status === 'pending') {
+              this.loadImage(img);
+              this.observer.unobserve(img);
+            }
+          }
+        });
+      }
+
+      loadImage(imgElement) {
+        const realSrc = imgElement.dataset.src;
+        const card = imgElement.closest('.image-card');
+        const statusElement = card.querySelector('.image-status');
+
+        this.stats.loading++;
+        this.updateStats();
+
+        imgElement.dataset.status = 'loading';
+        statusElement.textContent = '加载中...';
+        statusElement.className = 'image-status loading';
+
+        const img = new Image();
+
+        img.onload = () => {
+          imgElement.src = realSrc;
+          imgElement.classList.add('loaded');
+          imgElement.dataset.status = 'loaded';
+
+          this.stats.loading--;
+          this.stats.loaded++;
+          this.updateStats();
+
+          statusElement.textContent = '✅ 已加载';
+          statusElement.className = 'image-status loaded';
+
+          // 移除loading动画
+          const loading = card.querySelector('.loading');
+          if (loading) loading.style.display = 'none';
+
+          console.log(`✅ 图片加载成功: ${realSrc}`);
+        };
+
+        img.onerror = () => {
+          imgElement.src = this.errorPlaceholder;
+          imgElement.dataset.status = 'error';
+
+          this.stats.loading--;
+          this.stats.failed++;
+          this.updateStats();
+
+          statusElement.textContent = '❌ 加载失败';
+          statusElement.className = 'image-status error';
+
+          console.error(`❌ 图片加载失败: ${realSrc}`);
+        };
+
+        img.src = realSrc;
+      }
+
+      updateStats() {
+        document.getElementById('totalImages').textContent = this.stats.total;
+        document.getElementById('loadedImages').textContent = this.stats.loaded;
+        document.getElementById('loadingImages').textContent = this.stats.loading;
+
+        // 估算节省的流量 (假设每张图片平均300KB)
+        const savedImages = this.stats.total - this.stats.loaded - this.stats.loading;
+        const savedMB = (savedImages * 0.3).toFixed(2);
+        document.getElementById('savedBandwidth').textContent = `${savedMB} MB`;
+      }
+
+      reset() {
+        this.stats = {
+          total: 0,
+          loaded: 0,
+          loading: 0,
+          failed: 0,
+          savedBandwidth: 0
+        };
+        this.updateStats();
+      }
+    }
+
+    // ============ 应用示例 ============
+
+    const imageProxy = new ImageLazyLoadProxy({
+      rootMargin: '100px',  // 提前100px开始加载
+      threshold: 0.01
+    });
+
+    // Unsplash随机图片API
+    const imageCategories = [
+      'nature', 'city', 'technology', 'food', 'travel',
+      'architecture', 'animals', 'abstract', 'people', 'business'
+    ];
+
+    // 创建图片卡片
+    function createImageCard(index) {
+      const category = imageCategories[index % imageCategories.length];
+      const imageUrl = `https://source.unsplash.com/400x300/?${category}&sig=${index}`;
+
+      const card = document.createElement('div');
+      card.className = 'image-card';
+      card.innerHTML = `
+        <div class="image-container">
+          <div class="loading">
+            <div class="spinner"></div>
+            <div>加载中...</div>
+          </div>
+          <img data-index="${index}" alt="Image ${index + 1}">
+        </div>
+        <div class="image-info">
+          <div class="image-title">图片 #${index + 1} - ${category}</div>
+          <div class="image-status">⏳ 等待加载</div>
+        </div>
+      `;
+
+      const img = card.querySelector('img');
+      imageProxy.observe(img, imageUrl);
+
+      return card;
+    }
+
+    // 初始化图片网格
+    function initializeImages(count = 30) {
+      const grid = document.getElementById('imageGrid');
+      grid.innerHTML = '';
+
+      for (let i = 0; i < count; i++) {
+        grid.appendChild(createImageCard(i));
+      }
+    }
+
+    // 滚动位置监听
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          document.getElementById('scrollPosition').textContent = Math.round(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // 工具函数
+    function scrollToBottom() {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    function resetStats() {
+      imageProxy.reset();
+      initializeImages();
+    }
+
+    // 初始化
+    initializeImages(30);
+
+    console.log('✨ 图片懒加载代理已初始化');
+    console.log('📊 向下滚动查看图片按需加载');
+  </script>
+</body>
+</html>

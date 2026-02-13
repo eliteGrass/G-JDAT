@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 2: 响应式数据系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 32px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .panel h2 {
+      color: #f5576c;
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #f5576c;
+      padding-bottom: 10px;
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: #ddd;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #f5576c;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .value-display {
+      font-size: 24px;
+      font-weight: bold;
+      color: #f5576c;
+      margin-top: 10px;
+    }
+
+    .todo-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .todo-input input {
+      flex: 1;
+    }
+
+    .todo-input button {
+      padding: 10px 20px;
+      background: #f5576c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .todo-input button:hover {
+      background: #d94658;
+    }
+
+    .todo-list {
+      list-style: none;
+    }
+
+    .todo-item {
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .todo-item.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .todo-actions button {
+      margin-left: 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-complete {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: white;
+    }
+
+    .stats {
+      background: #fffbf0;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .stats-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .stats-label {
+      color: #666;
+    }
+
+    .stats-value {
+      font-weight: bold;
+      color: #f5576c;
+    }
+
+    .code-display {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      margin-top: 15px;
+      overflow-x: auto;
+    }
+
+    .code-display .keyword {
+      color: #c678dd;
+    }
+
+    .code-display .string {
+      color: #98c379;
+    }
+
+    .code-display .number {
+      color: #d19a66;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>响应式数据系统</h1>
+    <p class="subtitle">使用Proxy实现类似Vue3的响应式原理</p>
+
+    <div class="content">
+      <!-- 左侧：计数器示例 -->
+      <div class="panel">
+        <h2>计数器示例</h2>
+
+        <div class="control-group">
+          <label>数量: <span class="value-display" id="countDisplay">0</span></label>
+          <input type="range" id="countSlider" min="0" max="100" value="0">
+        </div>
+
+        <div class="control-group">
+          <label>倍数: <span class="value-display" id="multiplierDisplay">1</span></label>
+          <input type="range" id="multiplierSlider" min="1" max="10" value="1">
+        </div>
+
+        <div class="stats">
+          <div class="stats-item">
+            <span class="stats-label">数量 × 倍数:</span>
+            <span class="stats-value" id="total">0</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">数量²:</span>
+            <span class="stats-value" id="squared">0</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">是否大于50:</span>
+            <span class="stats-value" id="isLarge">否</span>
+          </div>
+        </div>
+
+        <div class="code-display">
+          <div><span class="keyword">const</span> state = reactive({</div>
+          <div>  count: <span class="number" id="codeCount">0</span>,</div>
+          <div>  multiplier: <span class="number" id="codeMultiplier">1</span></div>
+          <div>})</div>
+        </div>
+      </div>
+
+      <!-- 右侧：Todo列表示例 -->
+      <div class="panel">
+        <h2>待办事项列表</h2>
+
+        <div class="todo-input">
+          <input type="text" id="todoInput" placeholder="输入待办事项...">
+          <button onclick="addTodo()">添加</button>
+        </div>
+
+        <ul class="todo-list" id="todoList"></ul>
+
+        <div class="stats">
+          <div class="stats-item">
+            <span class="stats-label">总数:</span>
+            <span class="stats-value" id="todoTotal">0</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">已完成:</span>
+            <span class="stats-value" id="todoCompleted">0</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">未完成:</span>
+            <span class="stats-value" id="todoActive">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============ 简化版Vue3响应式系统实现 ============
+
+    // 依赖收集
+    const targetMap = new WeakMap();
+    let activeEffect = null;
+
+    // 追踪依赖
+    function track(target, key) {
+      if (!activeEffect) return;
+
+      let depsMap = targetMap.get(target);
+      if (!depsMap) {
+        targetMap.set(target, (depsMap = new Map()));
+      }
+
+      let dep = depsMap.get(key);
+      if (!dep) {
+        depsMap.set(key, (dep = new Set()));
+      }
+
+      dep.add(activeEffect);
+      console.log(`📌 追踪依赖: ${key}`);
+    }
+
+    // 触发更新
+    function trigger(target, key) {
+      const depsMap = targetMap.get(target);
+      if (!depsMap) return;
+
+      const dep = depsMap.get(key);
+      if (dep) {
+        console.log(`🔔 触发更新: ${key}, 影响 ${dep.size} 个副作用`);
+        dep.forEach(effect => effect());
+      }
+    }
+
+    // 创建响应式对象
+    function reactive(target) {
+      return new Proxy(target, {
+        get(target, key, receiver) {
+          const result = Reflect.get(target, key, receiver);
+          track(target, key);
+          return result;
+        },
+        set(target, key, value, receiver) {
+          const oldValue = target[key];
+          const result = Reflect.set(target, key, value, receiver);
+          if (oldValue !== value) {
+            trigger(target, key);
+          }
+          return result;
+        }
+      });
+    }
+
+    // 副作用函数
+    function effect(fn) {
+      activeEffect = fn;
+      fn();
+      activeEffect = null;
+    }
+
+    // 计算属性
+    function computed(getter) {
+      let value;
+      let dirty = true;
+
+      const effectFn = effect(() => {
+        if (dirty) {
+          value = getter();
+          dirty = false;
+        }
+      });
+
+      return {
+        get value() {
+          if (dirty) {
+            value = getter();
+            dirty = false;
+          }
+          return value;
+        }
+      };
+    }
+
+    // ============ 应用示例 ============
+
+    // 计数器状态
+    const counterState = reactive({
+      count: 0,
+      multiplier: 1
+    });
+
+    // 自动更新UI
+    effect(() => {
+      document.getElementById('countDisplay').textContent = counterState.count;
+      document.getElementById('codeCount').textContent = counterState.count;
+    });
+
+    effect(() => {
+      document.getElementById('multiplierDisplay').textContent = counterState.multiplier;
+      document.getElementById('codeMultiplier').textContent = counterState.multiplier;
+    });
+
+    effect(() => {
+      const total = counterState.count * counterState.multiplier;
+      document.getElementById('total').textContent = total;
+    });
+
+    effect(() => {
+      const squared = counterState.count ** 2;
+      document.getElementById('squared').textContent = squared;
+    });
+
+    effect(() => {
+      const isLarge = counterState.count > 50 ? '是' : '否';
+      document.getElementById('isLarge').textContent = isLarge;
+    });
+
+    // 监听滑块变化
+    document.getElementById('countSlider').addEventListener('input', (e) => {
+      counterState.count = Number(e.target.value);
+    });
+
+    document.getElementById('multiplierSlider').addEventListener('input', (e) => {
+      counterState.multiplier = Number(e.target.value);
+    });
+
+    // Todo状态
+    const todoState = reactive({
+      todos: [],
+      nextId: 1
+    });
+
+    // 渲染Todo列表
+    function renderTodos() {
+      const todoList = document.getElementById('todoList');
+      todoList.innerHTML = '';
+
+      todoState.todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+        li.innerHTML = `
+          <span>${todo.text}</span>
+          <div class="todo-actions">
+            <button class="btn-complete" onclick="toggleTodo(${todo.id})">
+              ${todo.completed ? '取消' : '完成'}
+            </button>
+            <button class="btn-delete" onclick="deleteTodo(${todo.id})">删除</button>
+          </div>
+        `;
+        todoList.appendChild(li);
+      });
+    }
+
+    // 自动更新统计
+    effect(() => {
+      const total = todoState.todos.length;
+      document.getElementById('todoTotal').textContent = total;
+    });
+
+    effect(() => {
+      const completed = todoState.todos.filter(t => t.completed).length;
+      document.getElementById('todoCompleted').textContent = completed;
+    });
+
+    effect(() => {
+      const active = todoState.todos.filter(t => !t.completed).length;
+      document.getElementById('todoActive').textContent = active;
+    });
+
+    effect(() => {
+      renderTodos();
+    });
+
+    // Todo操作函数
+    function addTodo() {
+      const input = document.getElementById('todoInput');
+      const text = input.value.trim();
+
+      if (text) {
+        todoState.todos = [...todoState.todos, {
+          id: todoState.nextId++,
+          text,
+          completed: false
+        }];
+        input.value = '';
+      }
+    }
+
+    function toggleTodo(id) {
+      todoState.todos = todoState.todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      );
+    }
+
+    function deleteTodo(id) {
+      todoState.todos = todoState.todos.filter(todo => todo.id !== id);
+    }
+
+    // 支持回车添加
+    document.getElementById('todoInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addTodo();
+      }
+    });
+
+    console.log('✨ 响应式系统已初始化');
+    console.log('💡 尝试修改状态，观察UI自动更新');
+  </script>
+</body>
+</html>

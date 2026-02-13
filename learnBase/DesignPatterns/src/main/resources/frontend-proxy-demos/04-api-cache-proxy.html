@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 4: API缓存代理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.95);
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .api-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .api-btn {
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .api-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .api-btn:active {
+      transform: translateY(0);
+    }
+
+    .api-btn.loading {
+      pointer-events: none;
+    }
+
+    .api-btn.loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      animation: loading 1s infinite;
+    }
+
+    @keyframes loading {
+      to { left: 100%; }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .cache-info {
+      background: #f5f7fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    .cache-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .cache-key {
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .cache-ttl {
+      color: #666;
+      font-size: 11px;
+    }
+
+    .clear-cache-btn {
+      width: 100%;
+      padding: 12px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .clear-cache-btn:hover {
+      background: #d32f2f;
+    }
+
+    .response-area {
+      height: 400px;
+      overflow-y: auto;
+      background: #282c34;
+      color: #abb2bf;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .response-item {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #3e4451;
+    }
+
+    .response-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .response-time {
+      color: #98c379;
+    }
+
+    .response-source {
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .source-api {
+      background: #e06c75;
+      color: white;
+    }
+
+    .source-cache {
+      background: #61afef;
+      color: white;
+    }
+
+    .source-pending {
+      background: #d19a66;
+      color: white;
+    }
+
+    .response-data {
+      color: #e5c07b;
+    }
+
+    .log-area {
+      height: 300px;
+      overflow-y: auto;
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+
+    .log-entry {
+      margin-bottom: 5px;
+      padding: 5px;
+      border-left: 3px solid transparent;
+    }
+
+    .log-info {
+      color: #61afef;
+      border-left-color: #61afef;
+    }
+
+    .log-success {
+      color: #98c379;
+      border-left-color: #98c379;
+    }
+
+    .log-warning {
+      color: #d19a66;
+      border-left-color: #d19a66;
+    }
+
+    .log-error {
+      color: #e06c75;
+      border-left-color: #e06c75;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>API缓存代理</h1>
+    <p class="subtitle">智能缓存 + 请求去重 + 性能优化</p>
+
+    <div class="layout">
+      <!-- 左侧控制面板 -->
+      <div class="panel">
+        <h2>API请求</h2>
+
+        <div class="api-buttons">
+          <button class="api-btn" onclick="fetchUser(1)">获取用户 #1</button>
+          <button class="api-btn" onclick="fetchUser(2)">获取用户 #2</button>
+          <button class="api-btn" onclick="fetchPosts()">获取文章列表</button>
+          <button class="api-btn" onclick="fetchComments()">获取评论列表</button>
+          <button class="api-btn" onclick="multipleRequests()">并发10个相同请求</button>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 20px;">
+          <div class="stat-card">
+            <div class="stat-label">API请求</div>
+            <div class="stat-value" id="apiCount">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">缓存命中</div>
+            <div class="stat-value" id="cacheCount">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">请求去重</div>
+            <div class="stat-value" id="dedupeCount">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">命中率</div>
+            <div class="stat-value" id="hitRate">0%</div>
+          </div>
+        </div>
+
+        <div class="cache-info">
+          <h3 style="font-size: 14px; margin-bottom: 10px; color: #667eea;">缓存状态</h3>
+          <div id="cacheList"></div>
+          <button class="clear-cache-btn" onclick="clearCache()">清空缓存</button>
+        </div>
+      </div>
+
+      <!-- 右侧结果面板 -->
+      <div class="panel">
+        <h2>响应数据</h2>
+        <div class="response-area" id="responseArea"></div>
+
+        <h2 style="margin-top: 20px;">请求日志</h2>
+        <div class="log-area" id="logArea"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============ API缓存代理实现 ============
+
+    class APIProxy {
+      constructor(options = {}) {
+        this.cache = new Map();
+        this.pendingRequests = new Map();
+        this.defaultTTL = options.defaultTTL || 30000; // 默认30秒
+        this.stats = {
+          apiRequests: 0,
+          cacheHits: 0,
+          dedupeHits: 0
+        };
+      }
+
+      async request(url, options = {}) {
+        const cacheKey = this.getCacheKey(url, options);
+        const cacheTTL = options.cacheTTL || this.defaultTTL;
+
+        // 1. 检查缓存
+        if (this.cache.has(cacheKey)) {
+          const cached = this.cache.get(cacheKey);
+          if (this.isValid(cached)) {
+            this.stats.cacheHits++;
+            this.log(`🎯 缓存命中: ${url}`, 'success');
+            this.updateStats();
+            return { data: cached.data, source: 'cache', fromCache: true };
+          } else {
+            this.log(`⏰ 缓存过期: ${url}`, 'warning');
+            this.cache.delete(cacheKey);
+          }
+        }
+
+        // 2. 检查正在进行的请求（防止重复）
+        if (this.pendingRequests.has(cacheKey)) {
+          this.stats.dedupeHits++;
+          this.log(`🔄 请求去重: ${url}`, 'info');
+          this.updateStats();
+          const data = await this.pendingRequests.get(cacheKey);
+          return { data, source: 'pending', fromCache: false };
+        }
+
+        // 3. 发起真实请求
+        this.log(`📡 发起API请求: ${url}`, 'info');
+        const requestPromise = this.fetchData(url, options)
+          .then(data => {
+            // 缓存结果
+            this.cache.set(cacheKey, {
+              data,
+              timestamp: Date.now(),
+              ttl: cacheTTL,
+              url
+            });
+            this.pendingRequests.delete(cacheKey);
+            this.stats.apiRequests++;
+            this.log(`✅ API请求成功: ${url}`, 'success');
+            this.updateStats();
+            this.updateCacheDisplay();
+            return data;
+          })
+          .catch(error => {
+            this.pendingRequests.delete(cacheKey);
+            this.log(`❌ API请求失败: ${url} - ${error.message}`, 'error');
+            throw error;
+          });
+
+        this.pendingRequests.set(cacheKey, requestPromise);
+        return { data: await requestPromise, source: 'api', fromCache: false };
+      }
+
+      async fetchData(url, options) {
+        // 模拟网络延迟
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      }
+
+      getCacheKey(url, options) {
+        return `${url}_${JSON.stringify(options)}`;
+      }
+
+      isValid(cached) {
+        return Date.now() - cached.timestamp < cached.ttl;
+      }
+
+      clearCache() {
+        this.cache.clear();
+        this.log('🗑️ 缓存已清空', 'warning');
+        this.updateCacheDisplay();
+      }
+
+      log(message, type = 'info') {
+        const logArea = document.getElementById('logArea');
+        const entry = document.createElement('div');
+        entry.className = `log-entry log-${type}`;
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        logArea.insertBefore(entry, logArea.firstChild);
+
+        // 限制日志条数
+        while (logArea.children.length > 100) {
+          logArea.removeChild(logArea.lastChild);
+        }
+      }
+
+      updateStats() {
+        const total = this.stats.apiRequests + this.stats.cacheHits;
+        const hitRate = total > 0 ? ((this.stats.cacheHits / total) * 100).toFixed(1) : 0;
+
+        document.getElementById('apiCount').textContent = this.stats.apiRequests;
+        document.getElementById('cacheCount').textContent = this.stats.cacheHits;
+        document.getElementById('dedupeCount').textContent = this.stats.dedupeHits;
+        document.getElementById('hitRate').textContent = `${hitRate}%`;
+      }
+
+      updateCacheDisplay() {
+        const cacheList = document.getElementById('cacheList');
+        cacheList.innerHTML = '';
+
+        if (this.cache.size === 0) {
+          cacheList.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">暂无缓存</div>';
+          return;
+        }
+
+        this.cache.forEach((value, key) => {
+          const remaining = Math.max(0, value.ttl - (Date.now() - value.timestamp));
+          const remainingSeconds = Math.ceil(remaining / 1000);
+
+          const item = document.createElement('div');
+          item.className = 'cache-item';
+          item.innerHTML = `
+            <div>
+              <div class="cache-key">${this.extractPath(value.url)}</div>
+              <div class="cache-ttl">剩余: ${remainingSeconds}秒</div>
+            </div>
+          `;
+          cacheList.appendChild(item);
+        });
+      }
+
+      extractPath(url) {
+        try {
+          const urlObj = new URL(url);
+          return urlObj.pathname.slice(0, 30);
+        } catch {
+          return url.slice(0, 30);
+        }
+      }
+    }
+
+    // ============ 应用示例 ============
+
+    const apiProxy = new APIProxy({
+      defaultTTL: 20000  // 20秒缓存
+    });
+
+    // 添加响应显示
+    function displayResponse(result, requestUrl) {
+      const responseArea = document.getElementById('responseArea');
+      const item = document.createElement('div');
+      item.className = 'response-item';
+
+      const sourceClass = result.source === 'api' ? 'source-api' :
+                         result.source === 'cache' ? 'source-cache' : 'source-pending';
+
+      const sourceText = result.source === 'api' ? 'API' :
+                        result.source === 'cache' ? 'CACHE' : 'PENDING';
+
+      item.innerHTML = `
+        <div class="response-header">
+          <span class="response-time">${new Date().toLocaleTimeString()}</span>
+          <span class="response-source ${sourceClass}">${sourceText}</span>
+        </div>
+        <div style="color: #61afef; margin-bottom: 5px;">URL: ${requestUrl}</div>
+        <div class="response-data">${JSON.stringify(result.data, null, 2).slice(0, 500)}...</div>
+      `;
+
+      responseArea.insertBefore(item, responseArea.firstChild);
+    }
+
+    // API请求函数
+    async function fetchUser(id) {
+      const btn = event.target;
+      btn.classList.add('loading');
+
+      try {
+        const url = `https://jsonplaceholder.typicode.com/users/${id}`;
+        const result = await apiProxy.request(url, { cacheTTL: 30000 });
+        displayResponse(result, url);
+      } catch (error) {
+        alert('请求失败: ' + error.message);
+      } finally {
+        btn.classList.remove('loading');
+      }
+    }
+
+    async function fetchPosts() {
+      const btn = event.target;
+      btn.classList.add('loading');
+
+      try {
+        const url = 'https://jsonplaceholder.typicode.com/posts?_limit=5';
+        const result = await apiProxy.request(url, { cacheTTL: 60000 });
+        displayResponse(result, url);
+      } catch (error) {
+        alert('请求失败: ' + error.message);
+      } finally {
+        btn.classList.remove('loading');
+      }
+    }
+
+    async function fetchComments() {
+      const btn = event.target;
+      btn.classList.add('loading');
+
+      try {
+        const url = 'https://jsonplaceholder.typicode.com/comments?_limit=5';
+        const result = await apiProxy.request(url, { cacheTTL: 45000 });
+        displayResponse(result, url);
+      } catch (error) {
+        alert('请求失败: ' + error.message);
+      } finally {
+        btn.classList.remove('loading');
+      }
+    }
+
+    async function multipleRequests() {
+      const btn = event.target;
+      btn.classList.add('loading');
+
+      try {
+        const url = 'https://jsonplaceholder.typicode.com/users/1';
+        const promises = Array(10).fill(null).map(() => apiProxy.request(url));
+
+        apiProxy.log('🚀 发起10个并发请求...', 'info');
+        const results = await Promise.all(promises);
+        apiProxy.log(`✅ 完成! 实际API请求: 1次, 去重: 9次`, 'success');
+
+        displayResponse(results[0], url);
+      } catch (error) {
+        alert('请求失败: ' + error.message);
+      } finally {
+        btn.classList.remove('loading');
+      }
+    }
+
+    function clearCache() {
+      apiProxy.clearCache();
+    }
+
+    // 初始化
+    apiProxy.log('✨ API缓存代理已初始化', 'success');
+    apiProxy.log('💡 尝试多次点击相同按钮，观察缓存效果', 'info');
+    apiProxy.updateStats();
+    apiProxy.updateCacheDisplay();
+
+    // 定期更新缓存显示
+    setInterval(() => {
+      apiProxy.updateCacheDisplay();
+    }, 1000);
+  </script>
+</body>
+</html>

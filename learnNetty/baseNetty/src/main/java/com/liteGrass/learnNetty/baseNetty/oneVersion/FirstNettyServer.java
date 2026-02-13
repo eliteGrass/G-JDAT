@@ -1,4 +1,4 @@
-package com.liteGrass.learnNetty.baseNetty;
+package com.liteGrass.learnNetty.baseNetty.oneVersion;
 
 
 import io.netty.bootstrap.ServerBootstrap;

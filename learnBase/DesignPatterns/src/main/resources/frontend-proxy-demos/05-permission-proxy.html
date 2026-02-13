@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 5: 权限控制代理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #12c2e9 0%, #c471ed 50%, #f64f59 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.95);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel h2 {
+      color: #c471ed;
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #c471ed;
+      padding-bottom: 10px;
+    }
+
+    .user-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .user-btn {
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .user-btn:hover {
+      border-color: #c471ed;
+      transform: translateY(-2px);
+    }
+
+    .user-btn.active {
+      background: linear-gradient(135deg, #c471ed 0%, #f64f59 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .user-icon {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .user-role {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .user-btn.active .user-role {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .data-card {
+      background: #f5f7fa;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .data-card.locked {
+      background: #ffebee;
+      border-color: #f44336;
+      position: relative;
+    }
+
+    .data-card.locked::before {
+      content: '🔒';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+    }
+
+    .data-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .data-value {
+      font-size: 16px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .data-card.locked .data-value {
+      filter: blur(5px);
+      user-select: none;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .action-btn {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .action-btn.read {
+      background: #2196f3;
+      color: white;
+    }
+
+    .action-btn.write {
+      background: #4caf50;
+      color: white;
+    }
+
+    .action-btn.delete {
+      background: #f44336;
+      color: white;
+    }
+
+    .action-btn:disabled {
+      background: #e0e0e0;
+      color: #999;
+      cursor: not-allowed;
+    }
+
+    .action-btn:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .log-panel {
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 20px;
+      height: 400px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    .log-entry {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      border-left: 3px solid transparent;
+    }
+
+    .log-success {
+      background: rgba(76, 175, 80, 0.1);
+      border-left-color: #4caf50;
+      color: #4caf50;
+    }
+
+    .log-error {
+      background: rgba(244, 67, 54, 0.1);
+      border-left-color: #f44336;
+      color: #f44336;
+    }
+
+    .log-warning {
+      background: rgba(255, 152, 0, 0.1);
+      border-left-color: #ff9800;
+      color: #ff9800;
+    }
+
+    .log-info {
+      background: rgba(33, 150, 243, 0.1);
+      border-left-color: #2196f3;
+      color: #2196f3;
+    }
+
+    .permissions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .permissions-table th,
+    .permissions-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .permissions-table th {
+      background: #f5f7fa;
+      font-weight: 600;
+      color: #666;
+      font-size: 12px;
+    }
+
+    .permissions-table td {
+      font-size: 13px;
+    }
+
+    .permission-indicator {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    .permission-indicator.allowed {
+      background: #4caf50;
+      color: white;
+    }
+
+    .permission-indicator.denied {
+      background: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>权限控制代理</h1>
+    <p class="subtitle">使用Proxy实现基于角色的访问控制（RBAC）</p>
+
+    <div class="layout">
+      <!-- 左侧：用户切换和数据显示 -->
+      <div class="panel">
+        <h2>选择用户角色</h2>
+
+        <div class="user-selector">
+          <div class="user-btn active" onclick="switchUser('employee', this)">
+            <div class="user-icon">👤</div>
+            <div>普通员工</div>
+            <div class="user-role">Employee</div>
+          </div>
+          <div class="user-btn" onclick="switchUser('manager', this)">
+            <div class="user-icon">👔</div>
+            <div>部门经理</div>
+            <div class="user-role">Manager</div>
+          </div>
+          <div class="user-btn" onclick="switchUser('admin', this)">
+            <div class="user-icon">👑</div>
+            <div>系统管理员</div>
+            <div class="user-role">Admin</div>
+          </div>
+        </div>
+
+        <h2>员工数据</h2>
+        <div class="data-grid">
+          <div class="data-card" id="card-id">
+            <div class="data-label">员工ID</div>
+            <div class="data-value" id="value-id">EMP-1001</div>
+          </div>
+          <div class="data-card" id="card-name">
+            <div class="data-label">姓名</div>
+            <div class="data-value" id="value-name">张三</div>
+          </div>
+          <div class="data-card" id="card-email">
+            <div class="data-label">邮箱</div>
+            <div class="data-value" id="value-email">zhangsan@company.com</div>
+          </div>
+          <div class="data-card" id="card-salary">
+            <div class="data-label">薪资</div>
+            <div class="data-value" id="value-salary">¥50,000</div>
+          </div>
+          <div class="data-card" id="card-ssn">
+            <div class="data-label">身份证号</div>
+            <div class="data-value" id="value-ssn">110101199001011234</div>
+          </div>
+          <div class="data-card" id="card-bankAccount">
+            <div class="data-label">银行账号</div>
+            <div class="data-value" id="value-bankAccount">6222 **** **** 1234</div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="action-btn read" onclick="tryReadSalary()">读取薪资</button>
+          <button class="action-btn write" onclick="tryUpdateEmail()">修改邮箱</button>
+          <button class="action-btn write" onclick="tryUpdateSalary()">修改薪资</button>
+          <button class="action-btn delete" onclick="tryDeleteSSN()">删除身份证</button>
+        </div>
+
+        <h2 style="margin-top: 25px;">权限矩阵</h2>
+        <table class="permissions-table">
+          <thead>
+            <tr>
+              <th>字段</th>
+              <th>读取</th>
+              <th>修改</th>
+              <th>删除</th>
+            </tr>
+          </thead>
+          <tbody id="permissionsTable"></tbody>
+        </table>
+      </div>
+
+      <!-- 右侧：日志 -->
+      <div class="panel">
+        <h2>操作日志</h2>
+        <div class="log-panel" id="logPanel"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============ 权限控制代理实现 ============
+
+    class PermissionProxy {
+      constructor(target, currentUser) {
+        this.target = target;
+        this.currentUser = currentUser;
+
+        return new Proxy(target, {
+          get: (target, property) => {
+            if (!this.hasReadPermission(property)) {
+              this.log(`❌ 访问被拒绝: ${this.currentUser.name} 尝试读取 ${property}`, 'error');
+              throw new Error(`Access denied: Cannot read property '${property}'`);
+            }
+            this.log(`✅ 读取成功: ${this.currentUser.name} 读取 ${property} = ${target[property]}`, 'success');
+            return target[property];
+          },
+          set: (target, property, value) => {
+            if (!this.hasWritePermission(property)) {
+              this.log(`❌ 修改被拒绝: ${this.currentUser.name} 尝试修改 ${property}`, 'error');
+              throw new Error(`Access denied: Cannot write property '${property}'`);
+            }
+            const oldValue = target[property];
+            target[property] = value;
+            this.log(`✅ 修改成功: ${this.currentUser.name} 修改 ${property}: ${oldValue} → ${value}`, 'success');
+            this.updateUI();
+            return true;
+          },
+          deleteProperty: (target, property) => {
+            if (!this.hasDeletePermission(property)) {
+              this.log(`❌ 删除被拒绝: ${this.currentUser.name} 尝试删除 ${property}`, 'error');
+              throw new Error(`Access denied: Cannot delete property '${property}'`);
+            }
+            delete target[property];
+            this.log(`✅ 删除成功: ${this.currentUser.name} 删除 ${property}`, 'warning');
+            this.updateUI();
+            return true;
+          }
+        });
+      }
+
+      hasReadPermission(property) {
+        const permissions = {
+          admin: ['id', 'name', 'email', 'salary', 'ssn', 'bankAccount'],
+          manager: ['id', 'name', 'email', 'salary'],
+          employee: ['id', 'name', 'email']
+        };
+        return permissions[this.currentUser.role]?.includes(property);
+      }
+
+      hasWritePermission(property) {
+        const permissions = {
+          admin: ['name', 'email', 'salary', 'ssn', 'bankAccount'],
+          manager: ['name', 'email', 'salary'],
+          employee: ['email']
+        };
+        return permissions[this.currentUser.role]?.includes(property);
+      }
+
+      hasDeletePermission(property) {
+        // 只有管理员可以删除敏感信息
+        return this.currentUser.role === 'admin';
+      }
+
+      log(message, type = 'info') {
+        const logPanel = document.getElementById('logPanel');
+        const entry = document.createElement('div');
+        entry.className = `log-entry log-${type}`;
+        entry.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+        logPanel.insertBefore(entry, logPanel.firstChild);
+      }
+
+      updateUI() {
+        updateDataDisplay();
+      }
+    }
+
+    // ============ 应用示例 ============
+
+    const employeeData = {
+      id: 'EMP-1001',
+      name: '张三',
+      email: 'zhangsan@company.com',
+      salary: 50000,
+      ssn: '110101199001011234',
+      bankAccount: '6222 **** **** 1234'
+    };
+
+    let currentUser = { name: 'Jane', role: 'employee' };
+    let employeeProxy = new PermissionProxy(employeeData, currentUser);
+
+    // 更新数据显示
+    function updateDataDisplay() {
+      const fields = ['id', 'name', 'email', 'salary', 'ssn', 'bankAccount'];
+
+      fields.forEach(field => {
+        const card = document.getElementById(`card-${field}`);
+        const value = document.getElementById(`value-${field}`);
+
+        try {
+          // 尝试读取（会触发权限检查）
+          const data = employeeProxy[field];
+          value.textContent = field === 'salary' ? `¥${data.toLocaleString()}` : data;
+          card.classList.remove('locked');
+        } catch (error) {
+          // 无权限访问
+          card.classList.add('locked');
+        }
+      });
+
+      updatePermissionsTable();
+    }
+
+    // 更新权限表
+    function updatePermissionsTable() {
+      const fields = ['id', 'name', 'email', 'salary', 'ssn', 'bankAccount'];
+      const tbody = document.getElementById('permissionsTable');
+      tbody.innerHTML = '';
+
+      fields.forEach(field => {
+        const canRead = employeeProxy.hasReadPermission(field);
+        const canWrite = employeeProxy.hasWritePermission(field);
+        const canDelete = employeeProxy.hasDeletePermission(field);
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${field}</strong></td>
+          <td><span class="permission-indicator ${canRead ? 'allowed' : 'denied'}">${canRead ? '✓' : '✗'}</span></td>
+          <td><span class="permission-indicator ${canWrite ? 'allowed' : 'denied'}">${canWrite ? '✓' : '✗'}</span></td>
+          <td><span class="permission-indicator ${canDelete ? 'allowed' : 'denied'}">${canDelete ? '✓' : '✗'}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // 切换用户
+    function switchUser(role, element) {
+      // 更新按钮状态
+      document.querySelectorAll('.user-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+
+      // 切换用户
+      const userNames = { employee: 'Jane', manager: 'Mike', admin: 'Admin' };
+      currentUser = { name: userNames[role], role: role };
+      employeeProxy = new PermissionProxy(employeeData, currentUser);
+
+      employeeProxy.log(`🔄 切换用户: ${currentUser.name} (${role})`, 'info');
+      updateDataDisplay();
+    }
+
+    // 测试操作
+    function tryReadSalary() {
+      try {
+        const salary = employeeProxy.salary;
+        alert(`薪资: ¥${salary.toLocaleString()}`);
+      } catch (error) {
+        alert('❌ ' + error.message);
+      }
+    }
+
+    function tryUpdateEmail() {
+      const newEmail = prompt('请输入新邮箱:');
+      if (newEmail) {
+        try {
+          employeeProxy.email = newEmail;
+          alert('✅ 邮箱修改成功！');
+        } catch (error) {
+          alert('❌ ' + error.message);
+        }
+      }
+    }
+
+    function tryUpdateSalary() {
+      const newSalary = prompt('请输入新薪资:');
+      if (newSalary) {
+        try {
+          employeeProxy.salary = Number(newSalary);
+          alert('✅ 薪资修改成功！');
+        } catch (error) {
+          alert('❌ ' + error.message);
+        }
+      }
+    }
+
+    function tryDeleteSSN() {
+      if (confirm('确定要删除身份证信息吗？')) {
+        try {
+          delete employeeProxy.ssn;
+          alert('✅ 身份证信息已删除！');
+        } catch (error) {
+          alert('❌ ' + error.message);
+        }
+      }
+    }
+
+    // 初始化
+    employeeProxy.log('✨ 权限控制系统已初始化', 'success');
+    employeeProxy.log('💡 尝试切换不同角色，体验权限控制', 'info');
+    updateDataDisplay();
+  </script>
+</body>
+</html>

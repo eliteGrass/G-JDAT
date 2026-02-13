@@ -1,0 +1,28 @@
+server:
+  port: 9090
+  servlet:
+    context-path: /api
+# 测速模块配置（新增）
+speed-test:
+  download-max-size-mb: 10         # 最大下载文件大小
+  upload-max-size-mb: 5            # 最大上传文件大小
+  max-requests-per-ip: 5           # 单IP 60秒内最多5次请求
+  rate-limit-period-seconds: 60    # 频率限制时间窗口
+
+# Redis配置（新增，根据实际环境修改）
+spring:
+  data:
+    redis:
+      host: 192.168.129.129    # Redis地址
+      port: 6380         # 端口
+      password: ""       # 密码（若有）
+      timeout: 2000ms    # 连接超时
+      lettuce:
+        pool:
+          max-active: 16 # 最大连接数
+          max-idle: 8    # 最大空闲连接
+          min-idle: 4    # 最小空闲连接
+
+
+# 调整文件上传限制（若需要）
+spring.servlet.multipart.max-file-size: 20MB

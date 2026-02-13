@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 1: 数据验证代理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    input.error {
+      border-color: #f44336;
+    }
+
+    input.success {
+      border-color: #4caf50;
+    }
+
+    .error-message {
+      color: #f44336;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .log-container {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .log-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .log-entry {
+      padding: 8px 12px;
+      margin: 5px 0;
+      border-radius: 5px;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .log-success {
+      background: #c8e6c9;
+      color: #2e7d32;
+    }
+
+    .log-error {
+      background: #ffcdd2;
+      color: #c62828;
+    }
+
+    .log-info {
+      background: #bbdefb;
+      color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>数据验证代理示例</h1>
+    <p class="subtitle">使用ES6 Proxy实现实时数据验证</p>
+
+    <form id="userForm">
+      <div class="form-group">
+        <label for="name">用户名</label>
+        <input type="text" id="name" placeholder="至少3个字符">
+        <div class="error-message" id="nameError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="age">年龄</label>
+        <input type="number" id="age" placeholder="0-150之间">
+        <div class="error-message" id="ageError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <input type="email" id="email" placeholder="example@domain.com">
+        <div class="error-message" id="emailError"></div>
+      </div>
+
+      <button type="submit">提交</button>
+    </form>
+
+    <div class="log-container">
+      <div class="log-title">验证日志：</div>
+      <div id="logs"></div>
+    </div>
+  </div>
+
+  <script>
+    // 日志工具函数
+    function addLog(message, type = 'info') {
+      const logsContainer = document.getElementById('logs');
+      const logEntry = document.createElement('div');
+      logEntry.className = `log-entry log-${type}`;
+      logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logsContainer.insertBefore(logEntry, logsContainer.firstChild);
+    }
+
+    // 创建验证规则
+    const validationRules = {
+      name: {
+        validate: (value) => {
+          if (!value || value.length < 3) {
+            return { valid: false, message: '用户名至少需要3个字符' };
+          }
+          if (value.length > 20) {
+            return { valid: false, message: '用户名不能超过20个字符' };
+          }
+          return { valid: true };
+        }
+      },
+      age: {
+        validate: (value) => {
+          const age = Number(value);
+          if (isNaN(age)) {
+            return { valid: false, message: '年龄必须是数字' };
+          }
+          if (age < 0 || age > 150) {
+            return { valid: false, message: '年龄必须在0-150之间' };
+          }
+          return { valid: true };
+        }
+      },
+      email: {
+        validate: (value) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) {
+            return { valid: false, message: '邮箱格式不正确' };
+          }
+          return { valid: true };
+        }
+      }
+    };
+
+    // 创建验证代理
+    function createValidationProxy(target, rules) {
+      return new Proxy(target, {
+        set(obj, property, value) {
+          // 如果有验证规则
+          if (rules[property]) {
+            const result = rules[property].validate(value);
+
+            const input = document.getElementById(property);
+            const errorDiv = document.getElementById(`${property}Error`);
+
+            if (!result.valid) {
+              // 验证失败
+              input.classList.add('error');
+              input.classList.remove('success');
+              errorDiv.textContent = result.message;
+              errorDiv.classList.add('show');
+              addLog(`❌ ${property}: ${result.message}`, 'error');
+              throw new Error(result.message);
+            } else {
+              // 验证成功
+              input.classList.remove('error');
+              input.classList.add('success');
+              errorDiv.classList.remove('show');
+              addLog(`✅ ${property}: 验证通过 - "${value}"`, 'success');
+            }
+          }
+
+          obj[property] = value;
+          return true;
+        },
+        get(obj, property) {
+          addLog(`📖 读取属性: ${property} = ${obj[property]}`, 'info');
+          return obj[property];
+        }
+      });
+    }
+
+    // 创建用户对象代理
+    const user = createValidationProxy({}, validationRules);
+
+    // 监听输入变化
+    document.getElementById('name').addEventListener('input', (e) => {
+      try {
+        user.name = e.target.value;
+      } catch (error) {
+        console.error('Validation error:', error.message);
+      }
+    });
+
+    document.getElementById('age').addEventListener('input', (e) => {
+      try {
+        user.age = e.target.value;
+      } catch (error) {
+        console.error('Validation error:', error.message);
+      }
+    });
+
+    document.getElementById('email').addEventListener('input', (e) => {
+      try {
+        user.email = e.target.value;
+      } catch (error) {
+        console.error('Validation error:', error.message);
+      }
+    });
+
+    // 表单提交
+    document.getElementById('userForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      try {
+        // 尝试设置所有值以触发验证
+        user.name = document.getElementById('name').value;
+        user.age = document.getElementById('age').value;
+        user.email = document.getElementById('email').value;
+
+        addLog('🎉 表单验证通过！数据：' + JSON.stringify(user), 'success');
+        alert('提交成功！');
+      } catch (error) {
+        addLog('⚠️ 表单验证失败，请检查输入', 'error');
+        alert('请修正错误后再提交');
+      }
+    });
+
+    // 初始日志
+    addLog('✨ 数据验证代理已初始化', 'success');
+  </script>
+</body>
+</html>

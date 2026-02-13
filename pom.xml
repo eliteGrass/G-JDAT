@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <description>JAVA  And Tools</description>
+    <description>JAVA And Tools</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -19,8 +19,10 @@
         <hutool-version>5.8.38</hutool-version>
         <junit-version>5.8.1</junit-version>
         <lombok-version>1.18.30</lombok-version>
-        <rocketmq-v5-client-spring-boot>2.3.3</rocketmq-v5-client-spring-boot> 
+        <rocketmq-v5-client-spring-boot>2.3.3</rocketmq-v5-client-spring-boot>
         <spring-boot-version>3.3.5</spring-boot-version>
+        <mybatis-plus-spring-boot>3.5.5</mybatis-plus-spring-boot>
+        <redisson-spring-boot>3.50.0</redisson-spring-boot>
         <mysql-version>8.0.33</mysql-version>
         <cglib-version>3.3.0</cglib-version>
         <slf4j-version>2.0.16</slf4j-version>
@@ -38,6 +40,10 @@
         <module>learnSpring</module>
         <module>learnNetty</module>
         <module>luren-master</module>
+        <module>businessMode</module>
+        <module>learnFrameCli</module>
+        <module>learnAi</module>
+        <module>learn-common-bom</module>
     </modules>
 
     <dependencyManagement>
@@ -48,6 +54,16 @@
                 <version>${spring-boot-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson-spring-boot}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus-spring-boot}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>

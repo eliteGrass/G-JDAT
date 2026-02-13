@@ -5,25 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.liteGrass</groupId>
-        <artifactId>G-JDAT</artifactId>
+        <artifactId>learnFLow</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>learnFLow</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>nexusFlow</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <flowable-v6-version>6.8.0</flowable-v6-version>
     </properties>
 
-    <modules>
-        <module>camunda-engine</module>
-        <module>FuckFlow</module>
-        <module>learn-flowable-v6</module>
-        <module>nexusFlow</module>
-    </modules>
 </project>

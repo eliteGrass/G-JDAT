@@ -1,0 +1,73 @@
+# 端口、应用名等通用配置
+server:
+  port: 8080
+spring:
+  application:
+    name: BM-Likes
+
+  # =============== 数据源 ===============
+  datasource:
+    # 1. 驱动（MySQL 8.x 用 com.mysql.cj.jdbc.Driver；5.x 用 com.mysql.jdbc.Driver）
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 2. 连接串（注意 serverTimezone、useSSL、allowPublicKeyRetrieval 按需配置）
+    url: jdbc:mysql://localhost:3306/liteGrass_BM?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    # 3. 账号密码
+    username: root
+    password: 100544
+    # 4. HikariCP 连接池常用参数（Spring Boot 2.x 默认就是 Hikari）
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+  # =============== redis ==============
+  data:
+    redis:
+      # 基础连接
+      host: 192.168.179.129
+      port: 6380
+      password: LongYi@OA2025@REDIS%^         # 无密码就留空
+      database: 10
+      timeout: 5s
+      # 客户端名称（可选，方便监控）
+      client-name: BM-Likes
+      # 连接池（Lettuce）
+      lettuce:
+        pool:
+          enabled: true          # 3.4 开始必须显式 true
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 2000ms
+          time-between-eviction-runs: 30s
+  # =============== redisson ===============
+  redis:
+    redisson:
+      address: redis://${spring.data.redis.host}:${spring.data.redis.port}   # 单机
+      password: ${spring.data.redis.password}                        # 无密码可省略
+      database: 9
+      connectionPoolSize: 64
+      idleConnectionTimeout: 10000
+  # =============== MyBatis-Plus ===============
+mybatis-plus:
+  # 1. 扫描 XML（如放在 resources/mapper）
+  mapper-locations: classpath*:/mapper/**/*Mapper.xml
+  # 2. 实体别名扫描包, 我们在xml中进行相关操作的时候只用写别名就行
+  type-aliases-package: com.liteGrass.bm.likes.entity
+  configuration:
+    # 开启驼峰自动映射
+    map-underscore-to-camel-case: true
+    # 日志实现
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 主键类型
+      id-type: assign_uuid
+      # 表名前缀（如果表统一前缀）
+      # table-prefix: t_
+
+# =============== 日志 ===============
+logging:
+  level:
+    com.liteGrass.bm.likes.mapper: debug
